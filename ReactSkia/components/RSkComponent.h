@@ -5,7 +5,8 @@
 
 #include "include/core/SkCanvas.h"
 #include "react/renderer/mounting/ShadowView.h"
-#include "sk_app/Window.h"
+
+#include "rns_shell/compositor/layers/Layer.h"
 
 namespace facebook {
 namespace react {
@@ -37,7 +38,7 @@ struct Component {
 
 class RSkComponent;
 
-class RSkComponent : public sk_app::Window::Layer {
+class RSkComponent : public RnsShell::Layer {
  public:
   RSkComponent(const ShadowView &shadowView);
   RSkComponent(RSkComponent &&) = default;
@@ -62,7 +63,7 @@ class RSkComponent : public sk_app::Window::Layer {
   virtual void OnPaint(SkCanvas *canvas) = 0;
 
  private:
-  // sk_app::Window::Layer implementations
+  // RnsShell::Layer implementations
   void onPaint(SkSurface *surface) override;
 
  private:
