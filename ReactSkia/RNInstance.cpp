@@ -17,6 +17,7 @@
 #include "ReactSkia/platform/linux/MainRunLoopEventBeat.h"
 #include "ReactSkia/platform/linux/RuntimeEventBeat.h"
 #endif
+#include "ReactSkia/utils/RnsLog.h"
 
 #include "ReactCommon/TurboModuleBinding.h"
 #include "cxxreact/JSBigString.h"
@@ -32,7 +33,6 @@
 #include "react/utils/ContextContainer.h"
 
 #include <folly/io/async/ScopedEventBaseThread.h>
-#include <glog/logging.h>
 
 namespace facebook {
 namespace react {
@@ -136,10 +136,10 @@ void RNInstance::InitializeJSCore() {
         std::move(source), "SimpleViewApp.bundle", true);
   } catch (const jsi::JSError &ex) {
     std::string exc = ex.what();
-    LOG(ERROR) << "JSError: " << exc;
+    RNS_LOG_ERROR("JS ERROR : " << exc);
   } catch (const std::system_error& ex) {
     std::string exc = ex.what();
-    LOG(ERROR) << "JSError: " << exc;
+    RNS_LOG_ERROR("SYSTEM ERROR : " << exc);
   }
 }
 

@@ -1,9 +1,11 @@
 #pragma once
 
+#include "ReactSkia/utils/RnsUtils.h"
+#include "ReactSkia/utils/RnsLog.h"
+
 #include "include/core/SkCanvas.h"
 #include "react/renderer/mounting/ShadowView.h"
 #include "sk_app/Window.h"
-#include <glog/logging.h>
 
 namespace facebook {
 namespace react {
