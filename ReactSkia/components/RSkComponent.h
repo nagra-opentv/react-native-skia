@@ -21,12 +21,16 @@ enum ComponentUpdateMask {
 
 struct Component {
   Component( const ShadowView &shadowView)
-    : props(shadowView.props)
+    : tag(shadowView.tag)
+    , componentName(shadowView.componentName)
+    , props(shadowView.props)
     , eventEmitter(shadowView.eventEmitter)
     , layoutMetrics(shadowView.layoutMetrics)
     , state(shadowView.state)
   {}
 
+  Tag tag;
+  ComponentName componentName;
   Props::Shared props{};
   EventEmitter::Shared eventEmitter{};
   LayoutMetrics layoutMetrics{EmptyLayoutMetrics};
@@ -55,7 +59,7 @@ class RSkComponent : public sk_app::Window::Layer {
   Component getComponentData() { return component_;};
   Point getFrameOrigin() { return absOrigin_;};
   Size getFrameSize() { return component_.layoutMetrics.frame.size;};
-
+  RSkComponent *getParent() {return parent_; };
  protected:
   virtual void OnPaint(SkCanvas *canvas) = 0;
 
