@@ -13,14 +13,8 @@ RSkComponent::RSkComponent(const ShadowView &shadowView)
     : parent_(nullptr)
     , absOrigin_(shadowView.layoutMetrics.frame.origin)
     , component_(shadowView)
-#ifdef RNS_ENABLE_API_PERF
-    , componentName_(shadowView.componentName ? shadowView.componentName : "Rootview")
-#endif
 {
     requiresLayer(shadowView);
-#ifdef RNS_ENABLE_API_PERF
-    RNS_UNUSED(componentName_);
-#endif
 }
 
 RSkComponent::~RSkComponent() {}
@@ -29,7 +23,7 @@ void RSkComponent::onPaint(SkSurface *surface) {
   if(surface) {
     auto canvas = surface->getCanvas();
     if(canvas)
-        RNS_PROFILE_API_AVG_ON(componentName_ << " Paint:", OnPaint(canvas));
+        RNS_PROFILE_API_AVG_ON(component_.componentName << " Paint:", OnPaint(canvas));
   } else {
       RNS_LOG_ERROR("Invalid Surface ??");
   }
@@ -43,7 +37,7 @@ sk_sp<SkPicture> RSkComponent::getPicture() {
   auto *canvas = recorder.beginRecording(SkRect::MakeXYWH(0, 0, frame.size.width, frame.size.height));
 
   if(canvas) {
-    RNS_PROFILE_API_OFF("Recording " << componentName_ << " Paint:", OnPaint(canvas));
+    RNS_PROFILE_API_OFF("Recording " << component_.componentName << " Paint:", OnPaint(canvas));
   } else {
     RNS_LOG_ERROR("Invalid canvas ??");
     return nullptr;
@@ -69,7 +63,7 @@ void RSkComponent::updateComponentData(const ShadowView &newShadowView , const u
       component_.layoutMetrics = newShadowView.layoutMetrics;
 
    if(layer_) {
-     RNS_PROFILE_API_OFF(componentName_ << " getPicture :", static_cast<RnsShell::PictureLayer*>(layer_.get())->setPicture(getPicture()));
+     RNS_PROFILE_API_OFF(component_.componentName << " getPicture :", static_cast<RnsShell::PictureLayer*>(layer_.get())->setPicture(getPicture()));
    }
 }
 
