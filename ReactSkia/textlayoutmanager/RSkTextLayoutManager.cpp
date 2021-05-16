@@ -65,12 +65,16 @@ TextMeasurement RSkTextLayoutManager::doMeasure (AttributedString attributedStri
     auto paragraph = builder->Build();
     paragraph->layout(layoutConstraints.maximumSize.width);
 
-    size.width = paragraph->getMaxIntrinsicWidth() < paragraph->getMaxWidth() ?
-	                                                          paragraph->getMaxIntrinsicWidth() :
-								  paragraph->getMaxWidth();
+    size.width = paragraph->getMaxIntrinsicWidth() < layoutConstraints.maximumSize.width ?
+                                                          paragraph->getMaxIntrinsicWidth() :
+                                                          paragraph->getMaxWidth();
     size.height = paragraph->getHeight();
 
-    Point attachmentPoint = calculateFramePoint({0,0}, size, layoutConstraints.maximumSize.width);
+    int xVal = size.width >= layoutConstraints.maximumSize.width ? 0 : size.width ;
+    int yVal = size.width >= layoutConstraints.maximumSize.width ? size.height : 0;
+    int lastMaxHeight = size.height;
+    bool excludeFragHeight = false;
+
     for (auto const &fragment : attributedString.getFragments()) {
        if (fragment.isAttachment()) {
            Rect rect;
@@ -79,16 +83,40 @@ TextMeasurement RSkTextLayoutManager::doMeasure (AttributedString attributedStri
            /* TODO : We will be unable to calculate exact (x,y) cordinates for the attachments*/
            /* Reason : attachment fragment width is clamped width wrt layout width; */
            /*          so we do not know actual position at which the previous attachment cordinate ends*/
+           attachments.push_back(TextMeasurement::Attachment{rect, false});
+
            /* But we need to still calculate total container height here, from all attachments */ 
            /* NOTE : height value calculated would be approximate,since we lack the knowledge of actual frag width here*/
-           attachmentPoint = calculateFramePoint(attachmentPoint, rect.size, layoutConstraints.maximumSize.width);
-           attachments.push_back(TextMeasurement::Attachment{rect, false});
+
+           /* In a line; if texts with diff font size,then we need to consider the max font size height */
+           if(rect.size.height > lastMaxHeight)
+               lastMaxHeight = rect.size.height;
+
+           /* If fragment width is >= layout width , height of fragment is total height of fragment box */
+           /* Else check if fragment fits in same line and include height of fragment & calculate xVal */
+           if( rect.size.width >= layoutConstraints.maximumSize.width) {
+              yVal += lastMaxHeight;
+              lastMaxHeight = 0;
+              excludeFragHeight = true;
+           } else if(xVal + rect.size.width < layoutConstraints.maximumSize.width) {
+              xVal += rect.size.width ;
+           } else {
+              auto delta = layoutConstraints.maximumSize.width - xVal ;
+              xVal = rect.size.width - delta ;
+              yVal += lastMaxHeight;
+              lastMaxHeight = 0;
+              excludeFragHeight = false;
+           }
        }
     }
 
     /* Update the container height from all attachments */
     if(!attachments.empty()) {
-       size.height = attachmentPoint.y + attachments[attachments.size()-1].frame.size.height;
+       size.width = layoutConstraints.maximumSize.width;
+       if(excludeFragHeight)
+           size.height = yVal ;
+       else
+           size.height = yVal + attachments[attachments.size()-1].frame.size.height;
     }
 
     return TextMeasurement{size, attachments};
