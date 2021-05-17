@@ -11,18 +11,9 @@
 #include <memory>
 
 #include "ReactSkia/utils/RnsUtils.h"
-#include "ReactSkia/utils/RnsLog.h"
-
-// webgpu_cpp.h and X.h don't get along. Include this first, before X11 defines None, Success etc.
-#ifdef SK_DAWN
-#include "dawn/webgpu_cpp.h"
-#endif
 
 #if PLATFORM(X11)
 #include <X11/Xlib.h>
-#include "x11/PlatformDisplayX11.h"
-#elif PLATFORM(LIBWPE)
-#include "libwpe/PlatformDisplayLibWPE.h"
 #endif
 
 #if USE(EGL)
@@ -33,6 +24,17 @@ typedef EGLNativeWindowType GLNativeWindowType;
 typedef uint64_t GLNativeWindowType;
 #else // !USE(EGL)
 typedef uint64_t GLNativeWindowType;
+#endif
+
+// webgpu_cpp.h and X.h don't get along. Include this first, before X11 defines None, Success etc.
+#ifdef SK_DAWN
+#include "dawn/webgpu_cpp.h"
+#endif
+
+#include "ReactSkia/utils/RnsLog.h"
+#include "PlatformDisplay.h"
+#if PLATFORM(X11)
+#include "x11/PlatformDisplayX11.h"
 #endif
 
 namespace RnsShell {

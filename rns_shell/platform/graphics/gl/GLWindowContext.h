@@ -37,10 +37,7 @@
 typedef EGLNativeWindowType GLNativeWindowType;
 #else
 typedef uint64_t GLNativeWindowType;
-#endif // USE(EGL)
-
-typedef void *EGLContext;
-typedef void *EGLDisplay;
+#endif
 
 namespace RnsShell {
 

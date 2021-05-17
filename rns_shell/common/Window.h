@@ -11,8 +11,6 @@
 #include "include/core/SkTypes.h"
 #include "include/private/SkTDArray.h"
 
-//#include "ReactSkia/utils/RnsLog.h"
-
 #include "Application.h"
 #include "DisplayParams.h"
 
@@ -60,6 +58,7 @@ public:
 
     // Returns null if there is not a GPU backend or if the backend is not yet created.
     GrDirectContext* directContext() const;
+    virtual void didRenderFrame() {};
 
 protected:
     Window();

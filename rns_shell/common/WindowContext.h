@@ -7,12 +7,13 @@
 
 #pragma once
 
+#include "ReactSkia/utils/RnsLog.h"
+
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSurfaceProps.h"
 #include "include/gpu/GrTypes.h"
 
 #include "DisplayParams.h"
-#include "PlatformDisplay.h"
 
 class GrDirectContext;
 class SkSurface;

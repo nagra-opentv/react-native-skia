@@ -55,6 +55,26 @@ if(is_linux && gl_display_backend == "x11") {
   ]
 }
 
+#Libwpe Platform sources and dependenices
+if(is_linux && gl_display_backend == "libwpe") {
+  pkg_config("use_system_libwpe") {
+    packages = [
+      "wpe-${wpe_interface_version}",
+      "glib-2.0",
+    ]
+    visibility = [ ":rns_shell" ]
+  }
+
+  libwpe_platform_source = [
+    "platform/graphics/libwpe/PlatformDisplayLibWPE.cpp",
+    "platform/graphics/libwpe/PlatformDisplayLibWPE.h",
+    "platform/graphics/libwpe/WindowLibWPE.cpp",
+  ]
+  if(gl_has_gpu) {
+    libwpe_platform_source += [ "platform/graphics/gl/egl/GLWindowContextEGLLibWPE.cpp" ]
+  }
+}
+
 source_set("rns_shell") {
 
   sources = [
@@ -111,6 +131,13 @@ source_set("rns_shell") {
       sources += x11_platform_source
       configs += [ ":use_system_x11" ]
       defines += [ "RNS_PLATFORM_X11" ]
+    } else if (gl_display_backend == "libwpe") { #Libwpe interface based backend. supports only EGL.
+      sources += libwpe_platform_source
+      configs += [ ":use_system_libwpe" ]
+      defines += [
+        "RNS_PLATFORM_LIBWPE",
+        "USE_WPE_RENDERER",
+      ]
     }
 
     if(gl_has_gpu) {
@@ -126,7 +153,10 @@ source_set("rns_shell") {
         if (gl_display_backend == "x11") {
           sources += [ "platform/graphics/gl/egl/GLWindowContextEGLX11.cpp"]
         }
-        defines += [ "USE_EGL" ]
+        defines += [
+          "USE_EGL",
+          "EGL_NO_X11"
+        ]
       }
       configs += [ ":use_system_gl" ]
 

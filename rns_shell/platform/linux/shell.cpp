@@ -16,6 +16,9 @@
 
 #if PLATFORM(X11)
 #include <X11/Xlib.h>
+#elif PLATFORM(LIBWPE)
+#include <glib.h>
+#include <wpe/wpe.h>
 #endif
 
 #include "include/core/SkTypes.h"
@@ -24,12 +27,8 @@
 #include "ReactSkia/utils/RnsLog.h"
 
 #include "Application.h"
+#include "Window.h"
 #include "PlatformDisplay.h"
-
-#if PLATFORM(X11)
-#include "x11/PlatformDisplayX11.h"
-#include "x11/WindowX11.h"
-#endif
 
 using namespace RnsShell;
 using namespace std;
@@ -38,6 +37,11 @@ static bool platformInitialize(char *program) {
     bool status = false;
 
     TaskLoop::initializeMain();
+
+#if PLATFORM(LIBWPE) || USE(WEP_RENDERER)
+    wpe_renderer_host_create_client(); // Has to be called before wpe_loader_init
+    wpe_loader_init(wpe_loader_get_loaded_implementation_library_name());
+#endif
 
     // Google Logging
     {

@@ -107,7 +107,7 @@ void Compositor::renderLayerTree() {
         startTime = SkTime::GetMSecs();
 #endif
         windowContext_->swapBuffers();
-        //didRenderFrame();
+        window_->didRenderFrame();
     }
 }
 

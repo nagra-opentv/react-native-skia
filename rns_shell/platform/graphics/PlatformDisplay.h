@@ -13,8 +13,8 @@
 #include "ReactSkia/utils/RnsUtils.h"
 
 #if USE(EGL)
-typedef void *EGLDisplay;
-#endif
+#include <EGL/egl.h>
+#endif // USE(EGL)
 
 namespace RnsShell {
 

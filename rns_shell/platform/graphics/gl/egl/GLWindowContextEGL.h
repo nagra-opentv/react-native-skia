@@ -18,7 +18,6 @@
 struct wpe_renderer_backend_egl_offscreen_target;
 #endif
 
-//using RnsShell::WCF::UnixWindowInfo;
 using RnsShell::DisplayParams;
 using RnsShell::GLWindowContext;
 
@@ -44,23 +43,33 @@ protected:
     sk_sp<const GrGLInterface> onInitializeContext() override;
 
 private:
-    static EGLContext createContextForEGLVersion(PlatformDisplay&, EGLConfig, EGLContext);
 
     GLWindowContextEGL(void*, const DisplayParams&);
+#if USE(WPE_RENDERER)
+    GLWindowContextEGL(PlatformDisplay&, EGLContext, EGLSurface, struct wpe_renderer_backend_egl_offscreen_target*);
+#endif
 
     enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface, Surfaceless };
-
+    static EGLContext createContextForEGLVersion(PlatformDisplay&, EGLConfig, EGLContext);
+#if PLATFORM(X11)
+    static EGLSurface createWindowSurfaceX11(EGLDisplay, EGLConfig, GLNativeWindowType);
+#elif PLATFORM(LIBWPE) || USE(WPE_RENDERER)
+    static EGLSurface createWindowSurfaceWPE(EGLDisplay, EGLConfig, GLNativeWindowType);
+#endif
+    static bool getEGLConfig(EGLDisplay, EGLConfig*, EGLSurfaceType);
     static std::unique_ptr<GLWindowContextEGL> createWindowContext(GLNativeWindowType, PlatformDisplay&, const DisplayParams&, EGLContext sharingContext = nullptr);
 
+#if USE(WPE_RENDERER)
+    void destroyWPETarget();
+#endif
     bool makeContextCurrent() override;
     void swapInterval();
 
-#if PLATFORM(X11)
-    static EGLSurface createWindowSurfaceX11(EGLDisplay, EGLConfig, GLNativeWindowType);
-#endif
-    static bool getEGLConfig(EGLDisplay, EGLConfig*, EGLSurfaceType);
 
     GLNativeWindowType      window_;
+#if USE(WPE_RENDERER)
+    struct wpe_renderer_backend_egl_offscreen_target* wpeTarget_ { nullptr };
+#endif
 
     PlatformDisplay& platformDisplay_;
     EGLSurface glSurface_ { nullptr };

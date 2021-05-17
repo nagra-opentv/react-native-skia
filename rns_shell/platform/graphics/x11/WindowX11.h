@@ -9,7 +9,9 @@
 #pragma once
 
 #include <X11/Xlib.h>
+#if USE(GLX)
 #include <GL/glx.h>
+#endif
 
 #include "include/private/SkChecksum.h"
 #include "src/core/SkTDynamicHash.h"

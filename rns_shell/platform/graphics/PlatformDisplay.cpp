@@ -16,9 +16,7 @@
 #include "PlatformDisplay.h"
 #if PLATFORM(X11)
 #include "x11/PlatformDisplayX11.h"
-#endif
-
-#if PLATFORM(LIBWPE) || USE(WPE_RENDERER)
+#elif PLATFORM(LIBWPE) || USE(WPE_RENDERER)
 #include "libwpe/PlatformDisplayLibWPE.h"
 #endif
 
@@ -152,7 +150,14 @@ PlatformDisplay& PlatformDisplay::sharedDisplayForCompositing() {
 bool PlatformDisplay::initialize() {
     if(s_sharedDisplayForCompositing)
         return true;
-    return (s_sharedDisplayForCompositing = &sharedDisplay()) ? true : false;
+    if(!(s_sharedDisplayForCompositing = &sharedDisplay()))
+        return false;
+
+#if PLATFORM(LIBWPE)
+    return dynamic_cast<RnsShell::PlatformDisplayLibWPE*>(s_sharedDisplayForCompositing)->initialize(wpe_renderer_host_create_client());
+#else
+    return true;
+#endif
 }
 
 } // namespace RnsShell
