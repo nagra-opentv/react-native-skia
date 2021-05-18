@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "ReactSkia/utils/RnsUtils.h"
+
 #include <X11/Xlib.h>
 #if USE(GLX)
 #include <GL/glx.h>

@@ -144,6 +144,8 @@ source_set("rns_shell") {
       if(gl_use_glx && gl_display_backend == "x11") { # Use GLX interface. Only for x11 backend
         defines += [ "USE_GLX" ]
         sources += [
+          "platform/graphics/gl/glx/GLWindowContextGLX.cpp",
+          "platform/graphics/gl/glx/GrGLMakeNativeInterfaceGLX.cpp",
         ]
       } else { # Using EGL interface
         sources += [
