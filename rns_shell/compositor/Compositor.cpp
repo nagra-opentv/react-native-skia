@@ -128,6 +128,10 @@ void Compositor::setRootLayer(SharedLayer rootLayer) {
 
 void Compositor::setViewportSize(const SkRect& viewportSize) {
     //locker(attributes_.lock);
+    if(viewportSize.width() == attributes_.viewportSize.width() &&
+        viewportSize.height() == attributes_.viewportSize.height()) {
+        return;
+    }
     attributes_.viewportSize = viewportSize;
     attributes_.needsResize = true;
     commit();

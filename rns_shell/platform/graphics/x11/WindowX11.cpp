@@ -89,12 +89,13 @@ bool WindowX11::initWindow(PlatformDisplay *platformDisplay) {
     }
     display_ = display;
 
-    int initialWidth = 1200;
-    int initialHeight = 800;
+    // Default HD
+    int initialWidth =  1280;
+    int initialHeight = 720;
     Screen *screen = nullptr;
 
     /* Read first screens display resolution*/
-    if(ScreenCount(display) > 0 && (screen = ScreenOfDisplay(display, 1))) {
+    if(ScreenCount(display) > 0 && (screen = ScreenOfDisplay(display, 0))) {
         initialWidth = screen->width;
         initialHeight = screen->height;
     }
