@@ -17,6 +17,7 @@ namespace RnsShell {
 
 SkTDynamicHash<WindowLibWPE, WPEWindowID> WindowLibWPE::gWindowMap;
 GMainLoop       *WindowLibWPE::mainLoop_;
+Application     *WindowLibWPE::mainApp_;
 
 bool WindowLibWPE::initViewBackend(wpe_view_backend* viewBackend) {
 
@@ -115,7 +116,7 @@ bool WindowLibWPE::initRenderTarget(wpe_view_backend* viewBackend, wpe_renderer_
 #endif
     };
     wpe_renderer_backend_egl_target_set_client(rendererTarget_, &s_client, this);
-    if( viewWidth_ <=0 || viewHeight_ <= 0) {
+    if( viewWidth_ <= 0 || viewHeight_ <= 0) {
         RNS_LOG_ERROR("Invalid View Size.. using default width and height");
         viewWidth_ = 1280;
         viewHeight_ = 720;
@@ -125,9 +126,11 @@ bool WindowLibWPE::initRenderTarget(wpe_view_backend* viewBackend, wpe_renderer_
     return true;
 }
 
-// Blocking eventLoop for X11 events, created with thread in main()
+// Blocking eventLoop for LIBWPE events, created with thread in main()
 void Window::createEventLoop(Application* app) {
     WindowLibWPE::mainLoop_ = g_main_loop_new(g_main_context_get_thread_default(), FALSE);
+    WindowLibWPE::mainApp_  = app;
+
     g_main_loop_run(WindowLibWPE::mainLoop_);
 
     TaskLoop::main().stop();
@@ -182,12 +185,17 @@ bool WindowLibWPE::initWindow(PlatformDisplay *platformDisplay) {
     // add to hashtable of windows
     gWindowMap.add(this);
 
+    if(WindowLibWPE::mainApp_)
+        WindowLibWPE::mainApp_->onResize(viewWidth_, viewHeight_);
+
     return true;
 }
 
 void WindowLibWPE::setViewSize(int width, int height) {
     viewWidth_ = width;
     viewHeight_ = height;
+    if(WindowLibWPE::mainApp_)
+        WindowLibWPE::mainApp_->onResize(viewWidth_, viewHeight_);
 }
 
 void WindowLibWPE::closeWindow() {

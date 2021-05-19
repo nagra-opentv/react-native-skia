@@ -89,8 +89,15 @@ bool WindowX11::initWindow(PlatformDisplay *platformDisplay) {
     }
     display_ = display;
 
-    constexpr int initialWidth = 1200;
-    constexpr int initialHeight = 800;
+    int initialWidth = 1200;
+    int initialHeight = 800;
+    Screen *screen = nullptr;
+
+    /* Read first screens display resolution*/
+    if(ScreenCount(display) > 0 && (screen = ScreenOfDisplay(display, 1))) {
+        initialWidth = screen->width;
+        initialHeight = screen->height;
+    }
 
 #if USE(GLX)
     // Attempt to create a window that supports GL

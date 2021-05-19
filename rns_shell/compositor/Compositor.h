@@ -28,6 +28,7 @@ public:
     Layer* rootLayer() { return rootLayer_.get(); }
     void setRootLayer(SharedLayer rootLayer);
     void setViewportSize(const SkRect& viewportSize);
+    SkRect& viewport() { return attributes_.viewportSize; }
     void invalidate();
     void commit();
 

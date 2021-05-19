@@ -61,6 +61,7 @@ public:
 
     static SkTDynamicHash<WindowLibWPE, WPEWindowID> gWindowMap;
     static GMainLoop       *mainLoop_;
+    static Application     *mainApp_; // Addded for triggering resize from window event.
 
 private:
     void setViewSize(int width, int height);
