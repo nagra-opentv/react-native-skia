@@ -8,8 +8,8 @@
 
 
 #include "src/utils/SkUTF.h"
-#include "WindowLibWPE.h"
 #include "WindowContextFactory.h"
+#include "WindowLibWPE.h"
 
 #include "platform/linux/TaskLoop.h"
 

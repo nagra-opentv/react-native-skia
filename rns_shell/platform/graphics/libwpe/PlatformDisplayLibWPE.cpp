@@ -7,16 +7,18 @@
 
 #include "ReactSkia/utils/RnsUtils.h"
 
-#if USE(WPE_RENDERER) && USE(EGL)
+#if USE(WPE_RENDERER)
 
+#if USE(EGL)
 #if PLATFORM(WAYLAND)
 #include <wayland-egl.h> // wayland-egl.h defines WL_EGL_PLATFORM
 #endif
 
 #include <EGL/egl.h>
+#include "egl/GLWindowContextEGL.h"
+#endif
 
 #include "PlatformDisplayLibWPE.h"
-#include "egl/GLWindowContextEGL.h"
 
 namespace RnsShell {
 

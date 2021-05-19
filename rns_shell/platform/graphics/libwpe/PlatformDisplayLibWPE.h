@@ -11,9 +11,7 @@
 
 #if PLATFORM(LIBWPE) || USE(WPE_RENDERER)
 #include <wpe/wpe.h>
-#if USE(EGL)
 #include <wpe/wpe-egl.h>
-#endif
 
 #include "PlatformDisplay.h"
 

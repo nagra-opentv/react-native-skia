@@ -13,6 +13,14 @@
 #include "egl/GLWindowContextEGL.h"
 #endif
 
+#ifndef RNS_SHELL_HAS_GPU_SUPPORT
+#if PLATFORM(X11)
+#include "x11/RasterWindowContextX11.h"
+#elif PLATFORM(LIBWPE)
+#include "libwpe/RasterWindowContextLibWPE.h"
+#endif
+#endif
+
 namespace RnsShell {
 
 namespace WCF { //window_context_factory
@@ -37,8 +45,11 @@ std::unique_ptr<WindowContext> createContextForWindow(GLNativeWindowType windowH
 #if PLATFORM(X11)
     if(auto rasterContext = RasterWindowContextX11::createContext(windowHandle, display, params))
         return rasterContext;
+#elif PLATFORM(LIBWPE)
+    if(auto rasterContext = RasterWindowContextLibWPE::createContext(windowHandle, display, params))
+        return rasterContext;
 #else
-    RNS_SHELL_NOT_IMPL
+    RNS_LOG_NOT_IMPL;
 #endif
     return nullptr;
 }

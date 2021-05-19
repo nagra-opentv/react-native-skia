@@ -88,8 +88,10 @@ void Compositor::renderLayerTree() {
             attributes_.needsResize = false;
         }
 
+#ifdef RNS_SHELL_HAS_GPU_SUPPORT
         if (needsResize)
             glViewport(0, 0, viewportSize.width(), viewportSize.height());
+#endif
 
         double startTime = 0;
         rootLayer_.get()->prePaint(backBuffer_.get());

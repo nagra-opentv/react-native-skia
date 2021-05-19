@@ -53,6 +53,13 @@ if(is_linux && gl_display_backend == "x11") {
     "platform/graphics/x11/WindowX11.h",
     "platform/graphics/x11/WindowX11.cpp",
   ]
+
+  if(!gl_has_gpu) {
+    x11_platform_source += [
+      "platform/graphics/x11/RasterWindowContextX11.h",
+      "platform/graphics/x11/RasterWindowContextX11.cpp",
+    ] # X11 Raster
+  }
 }
 
 #Libwpe Platform sources and dependenices
@@ -72,6 +79,11 @@ if(is_linux && gl_display_backend == "libwpe") {
   ]
   if(gl_has_gpu) {
     libwpe_platform_source += [ "platform/graphics/gl/egl/GLWindowContextEGLLibWPE.cpp" ]
+  } else {
+    libwpe_platform_source += [
+      "platform/graphics/libwpe/RasterWindowContextLibWPE.h",
+      "platform/graphics/libwpe/RasterWindowContextLibWPE.cpp",
+    ] # LibWPE Raster
   }
 }
 
@@ -169,6 +181,12 @@ source_set("rns_shell") {
         defines += [ "USE_OPENGL" ]
       }
       defines += [ "RNS_SHELL_HAS_GPU_SUPPORT" ]
+    } else {
+        if (gl_display_backend != "x11") {
+          defines += [
+            "EGL_NO_X11"
+          ]
+        }
     }
   }
 

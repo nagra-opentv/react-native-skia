@@ -19,6 +19,7 @@ RSkSurfaceWindow::~RSkSurfaceWindow() {
 }
 
 LayoutConstraints RSkSurfaceWindow::GetLayoutConstraints() {
+  RNS_LOG_TODO("This is called too early , before we get window size");
   Size windowSize{static_cast<Float>(compositor_->viewport().width()),
                   static_cast<Float>(compositor_->viewport().height())};
   return {windowSize, windowSize};
