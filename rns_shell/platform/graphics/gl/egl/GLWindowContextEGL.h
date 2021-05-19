@@ -28,7 +28,7 @@ public:
     static std::unique_ptr<WindowContext> createContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, const DisplayParams& params);
     static EGLContext createSharingContext(PlatformDisplay& platformDisplay);
 
-    GLWindowContextEGL(GLNativeWindowType window, PlatformDisplay& platformDisplay, const DisplayParams& params, EGLContext context, EGLSurface surface);
+    GLWindowContextEGL(GLNativeWindowType window, EGLConfig config, PlatformDisplay& platformDisplay, const DisplayParams& params, EGLContext context, EGLSurface surface);
     ~GLWindowContextEGL() override;
 
     static const char* errorString(int statusCode);

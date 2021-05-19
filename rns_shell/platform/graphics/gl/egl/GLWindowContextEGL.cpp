@@ -180,16 +180,14 @@ EGLContext GLWindowContextEGL::createContextForEGLVersion(PlatformDisplay& platf
     return eglCreateContext(platformDisplay.eglDisplay(), config, sharingContext, contextAttributes);
 }
 
-GLWindowContextEGL::GLWindowContextEGL(GLNativeWindowType window, PlatformDisplay& platformDisplay, const DisplayParams& params, EGLContext context, EGLSurface surface)
+GLWindowContextEGL::GLWindowContextEGL(GLNativeWindowType window, EGLConfig config, PlatformDisplay& platformDisplay, const DisplayParams& params, EGLContext context, EGLSurface surface)
         : INHERITED(params)
         , window_(window)
         , platformDisplay_(platformDisplay)
         , glSurface_(surface)
         , glContext_(context) {
-    //TODO use same config as used while creating EGLcontext
-    RNS_LOG_TODO("Use same config as used while creating EGLcontext");
+
     EGLDisplay display = platformDisplay.eglDisplay();
-    EGLConfig config;
     if (!getEGLConfig(display, &config, WindowSurface)) {
         RNS_LOG_ERROR("Cannot obtain EGL window context configuration : " << eglErrorString());
         return;
@@ -247,7 +245,7 @@ std::unique_ptr<GLWindowContextEGL> GLWindowContextEGL::createWindowContext(GLNa
         eglDestroyContext(display, context);
         return nullptr;
     }
-    return std::unique_ptr<GLWindowContextEGL>(new GLWindowContextEGL(window, platformDisplay, params, context, surface));
+    return std::unique_ptr<GLWindowContextEGL>(new GLWindowContextEGL(window, config, platformDisplay, params, context, surface));
 }
 
 std::unique_ptr<WindowContext> GLWindowContextEGL::createContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, const DisplayParams& params) {
