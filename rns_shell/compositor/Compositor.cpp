@@ -29,12 +29,6 @@ std::unique_ptr<Compositor> Compositor::create(SkRect& viewPort, float scaleFact
 Compositor::Compositor(SkRect& viewportSize, float scaleFactor)
     :rootLayer_(nullptr)
     ,window_(Window::createNativeWindow(&PlatformDisplay::sharedDisplayForCompositing())) {
-    {
-        //locker(attributes_.lock);
-        attributes_.viewportSize = viewportSize;
-        attributes_.scaleFactor = scaleFactor;
-        attributes_.needsResize = !viewportSize.isEmpty();
-    }
 
     nativeWindowHandle_ = window_ ? window_->nativeWindowHandle() : 0;
     if(nativeWindowHandle_) {
@@ -43,6 +37,15 @@ Compositor::Compositor(SkRect& viewportSize, float scaleFactor)
 
     if(windowContext_) {
         backBuffer_ = windowContext_->getBackbufferSurface();
+    }
+    {
+        //locker(attributes_.lock);
+        if(viewportSize.isEmpty())
+            attributes_.viewportSize = SkRect::MakeWH(windowContext_->width(), windowContext_->height());
+        else
+            attributes_.viewportSize = viewportSize;
+        attributes_.scaleFactor = scaleFactor;
+        attributes_.needsResize = !viewportSize.isEmpty();
     }
     RNS_LOG_DEBUG("Native Window Handle : " << nativeWindowHandle_ << " Window Context : " << windowContext_.get() << "Back Buffer : " << backBuffer_.get());
 }

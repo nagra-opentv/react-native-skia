@@ -9,7 +9,7 @@ namespace facebook {
 namespace react {
 
 RSkSurfaceWindow::RSkSurfaceWindow() {
-  SkRect viewPort(SkRect::MakeWH(-1, -1));
+  SkRect viewPort(SkRect::MakeEmpty());
   compositor_ = Compositor::create(viewPort);
 }
 
@@ -19,7 +19,6 @@ RSkSurfaceWindow::~RSkSurfaceWindow() {
 }
 
 LayoutConstraints RSkSurfaceWindow::GetLayoutConstraints() {
-  RNS_LOG_TODO("This is called too early , before we get window size");
   Size windowSize{static_cast<Float>(compositor_->viewport().width()),
                   static_cast<Float>(compositor_->viewport().height())};
   return {windowSize, windowSize};
