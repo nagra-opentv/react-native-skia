@@ -5,11 +5,12 @@
  * found in the LICENSE file.
  */
 
+#ifdef RNS_SHELL_HAS_GPU_SUPPORT
+#include "include/gpu/GrDirectContext.h"
 #include "gl/GLWindowContext.h"
-
+#endif
 #include "WindowContext.h"
 
-#include "include/gpu/GrDirectContext.h"
 
 namespace RnsShell {
 

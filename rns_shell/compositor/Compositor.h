@@ -11,7 +11,6 @@
 
 #include "Window.h"
 #include "WindowContext.h"
-#include "GLWindowContext.h"
 #include "PlatformDisplay.h"
 #include "layers/Layer.h"
 

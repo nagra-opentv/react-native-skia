@@ -11,11 +11,14 @@
 
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSurfaceProps.h"
+#ifdef RNS_SHELL_HAS_GPU_SUPPORT
 #include "include/gpu/GrTypes.h"
-
+#endif
 #include "DisplayParams.h"
 
+#ifdef RNS_SHELL_HAS_GPU_SUPPORT
 class GrDirectContext;
+#endif
 class SkSurface;
 
 namespace RnsShell {
@@ -36,8 +39,9 @@ public:
     const DisplayParams& getDisplayParams() { return displayParams_; }
     virtual void setDisplayParams(const DisplayParams& params) = 0;
 
+#ifdef RNS_SHELL_HAS_GPU_SUPPORT
     GrDirectContext* directContext() const { return context_.get(); }
-
+#endif
     int width() const { return width_; }
     int height() const { return height_; }
     int sampleCount() const { return sampleCount_; }
@@ -46,8 +50,9 @@ public:
 protected:
     virtual bool isGpuContext() { return true;  }
 
+#ifdef RNS_SHELL_HAS_GPU_SUPPORT
     sk_sp<GrDirectContext> context_;
-
+#endif
     int               width_;
     int               height_;
     DisplayParams     displayParams_;

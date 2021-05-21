@@ -13,8 +13,12 @@
 #include "ReactSkia/utils/RnsLog.h"
 
 #include "platform/linux/TaskLoop.h"
-#include "Compositor.h"
 #include "WindowContextFactory.h"
+#ifdef RNS_SHELL_HAS_GPU_SUPPORT
+#include "GLWindowContext.h"
+#endif
+
+#include "Compositor.h"
 
 namespace RnsShell {
 
