@@ -9,6 +9,7 @@
 #include <string>
 #include <iostream>
 #include <thread>
+#include <filesystem>
 
 #include "ReactSkia/utils/RnsUtils.h"
 // Must be added before X11 headrs because Folly uses "Struct None" and X11 has "#define None 0L" which conflicts
@@ -31,9 +32,9 @@
 #include "PlatformDisplay.h"
 
 using namespace RnsShell;
-using namespace std;
+namespace fs = std::filesystem;
 
-static bool platformInitialize(char *program) {
+static bool platformInitialize(char **argv) {
     bool status = false;
 
     TaskLoop::initializeMain();
@@ -53,7 +54,14 @@ static bool platformInitialize(char *program) {
         // Applicable only when FLAGS_logtostderr is set to 0
         FLAGS_stderrthreshold = 0; // Log level matching this and above this will be also printed on stderr.
         FLAGS_log_dir = "/tmp/glog";
-        google::InitGoogleLogging(program);
+        google::InitGoogleLogging(argv[0]);
+    }
+
+    // Js bundle path papssed as first argument
+    if(argv[1]) {
+        fs::path p(argv[1]);
+        RNS_LOG_INFO("Load " << p.filename() << ", from " << fs::canonical(p.parent_path()));
+        fs::current_path(fs::canonical(p.parent_path())); // Change current directory to app directory
     }
     status = PlatformDisplay::initialize();
 
@@ -67,7 +75,7 @@ static void platformFinalize() {
 
 int main(int argc, char**argv) {
 
-    if(false == platformInitialize(argv[0])) {
+    if(false == platformInitialize(argv)) {
         RNS_LOG_FATAL("Platform Initialize Failed");
         return EXIT_FAILURE;
     }
