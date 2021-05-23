@@ -1,12 +1,20 @@
 # ReactSkia Build.gn
 
+declare_args() {
+  # Enable API profiling
+  rns_enable_api_profiling = false
+}
+
 config("ReactSkia_config") {
   include_dirs = [
-    # "//react-native",
      "//rns_shell/common",
      "//rns_shell/platform/graphics",
      "//rns_shell/platform/graphics/gl",
   ]
+  defines = []
+  if(rns_enable_api_profiling) {
+    defines += ["RNS_ENABLE_API_PERF"]
+  }
 }
 
 source_set("ReactSkia") {

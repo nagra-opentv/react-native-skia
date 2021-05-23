@@ -100,29 +100,17 @@ void Compositor::renderLayerTree() {
             glViewport(0, 0, viewportSize.width(), viewportSize.height());
 #endif
 
-        double startTime = 0;
-        rootLayer_.get()->prePaint(backBuffer_.get());
-#if !defined(GOOGLE_STRIP_LOG) || (GOOGLE_STRIP_LOG <= INFO)
-        startTime = SkTime::GetMSecs();
-#endif
-        rootLayer_.get()->paint(backBuffer_.get());
-#if !defined(GOOGLE_STRIP_LOG) || (GOOGLE_STRIP_LOG <= INFO)
-        RNS_LOG_TRACE("Paint took " <<  (SkTime::GetMSecs() - startTime) << " ms  to paint Render Tree");
-        startTime = SkTime::GetMSecs();
-#endif
-        backBuffer_->flushAndSubmit();
-#if !defined(GOOGLE_STRIP_LOG) || (GOOGLE_STRIP_LOG <= INFO)
-        RNS_LOG_TRACE("Flush took " <<  (SkTime::GetMSecs() - startTime) << " ms  to paint Render Tree");
-        startTime = SkTime::GetMSecs();
-#endif
-        windowContext_->swapBuffers();
+        RNS_PROFILE_API_OFF("Render Tree Pre-Paint", rootLayer_.get()->prePaint(backBuffer_.get()));
+        RNS_PROFILE_API_AVG_ON("Render Tree Paint", rootLayer_.get()->paint(backBuffer_.get()));
+        RNS_PROFILE_API_AVG_ON("SkSurface Flush & Submit", backBuffer_->flushAndSubmit());
+        RNS_PROFILE_API_AVG_ON("SwapBuffers", windowContext_->swapBuffers());
         window_->didRenderFrame();
     }
 }
 
 void Compositor::commit() {
     TaskLoop::main().dispatch([&]() {
-        renderLayerTree();
+        RNS_PROFILE_API_AVG_ON("RenderTree :", renderLayerTree());
     });
 }
 

@@ -70,6 +70,9 @@ class RSkComponent : public RnsShell::Layer {
   RSkComponent *parent_;
   Point absOrigin_;
   Component component_;
+#ifdef RNS_ENABLE_API_PERF
+  ComponentName componentName_;
+#endif
 };
 
 } // namespace react

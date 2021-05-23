@@ -27,3 +27,28 @@
 
 #define RNS_GET_TIME_STAMP_NS(marker) \
     double marker = SkTime::GetNSecs();
+
+// Profiling
+#define RNS_PROFILE_API_OFF(msg, instruction) instruction
+#define RNS_PROFILE_API_AVG_OFF(msg, instruction) instruction
+#ifdef RNS_ENABLE_API_PERF
+    #define RNS_PROFILE_API_ON(msg, instruction) \
+        {\
+            double startMarker= SkTime::GetMSecs(); \
+            instruction; \
+            RNS_LOG_INFO(msg << " took " <<  (SkTime::GetMSecs() - startMarker) << " ms"); \
+        }
+    #define RNS_PROFILE_API_AVG_ON(msg, instruction) \
+        {\
+            static unsigned long long localCount = 0;\
+            static double start = 0, total = 0; \
+            start = SkTime::GetMSecs(); \
+            instruction; \
+            total += (SkTime::GetMSecs() - start); \
+            localCount++;\
+            RNS_LOG_INFO(msg << " Average(" <<  ( total / localCount) << ") ms"); \
+        }
+#else
+    #define RNS_PROFILE_API_ON(msg, instruction) instruction
+    #define RNS_PROFILE_API_AVG_ON(msg, instruction) instruction
+#endif

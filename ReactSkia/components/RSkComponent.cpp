@@ -10,7 +10,14 @@ RSkComponent::RSkComponent(const ShadowView &shadowView)
     : parent_(nullptr)
     , absOrigin_(shadowView.layoutMetrics.frame.origin)
     , component_(shadowView)
-    {}
+#ifdef RNS_ENABLE_API_PERF
+    , componentName_(shadowView.componentName ? shadowView.componentName : "Rootview")
+#endif
+    {
+#ifdef RNS_ENABLE_API_PERF
+    RNS_UNUSED(componentName_);
+#endif
+}
 
 RSkComponent::~RSkComponent() {}
 
@@ -18,7 +25,7 @@ void RSkComponent::onPaint(SkSurface *surface) {
   if(surface) {
     auto canvas = surface->getCanvas();
     if(canvas)
-        OnPaint(canvas);
+        RNS_PROFILE_API_AVG_ON(componentName_ << " Paint:", OnPaint(canvas));
   } else {
       RNS_LOG_ERROR("Invalid canvas ??");
   }
