@@ -20,7 +20,12 @@ std::unique_ptr<WindowContext> RasterWindowContextLibWPE::createContext(GLNative
 
 RasterWindowContextLibWPE::RasterWindowContextLibWPE(GLNativeWindowType window, PlatformDisplay* platformDisplay, const DisplayParams& params)
         : INHERITED(params)
+        , display_((dynamic_cast<PlatformDisplayLibWPE*>(platformDisplay))->native())
         , window_(window) {
+
+    width_ = display_->screen().width;
+    height_ = display_->screen().height;
+
     initializeContext();
 }
 
@@ -29,8 +34,6 @@ void RasterWindowContextLibWPE::setDisplayParams(const DisplayParams& params) {
 }
 
 void RasterWindowContextLibWPE::initializeContext() {
-
-    RNS_LOG_TODO("Set width_ and height_ based on native window resolution");
 
     SkImageInfo info = SkImageInfo::Make(width_, height_, displayParams_.colorType_, kPremul_SkAlphaType,
                                          displayParams_.colorSpace_);

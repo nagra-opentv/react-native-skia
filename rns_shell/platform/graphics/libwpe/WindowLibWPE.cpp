@@ -170,6 +170,10 @@ bool WindowLibWPE::initWindow(PlatformDisplay *platformDisplay) {
         return true;
     }
 
+    display_ = display;
+    platformDisplay_ = platformDisplay;
+    MSAASampleCount_ = requestedDisplayParams_.msaaSampleCount_;
+
     if(false == initViewBackend(viewBackend)) {
         return false;
     }
@@ -177,10 +181,6 @@ bool WindowLibWPE::initWindow(PlatformDisplay *platformDisplay) {
         return false;
     }
     window_ = (reinterpret_cast<GLNativeWindowType>(wpe_renderer_backend_egl_target_get_native_window(rendererTarget_)));
-
-    display_ = display;
-    platformDisplay_ = platformDisplay;
-    MSAASampleCount_ = requestedDisplayParams_.msaaSampleCount_;
 
     // add to hashtable of windows
     gWindowMap.add(this);
@@ -192,6 +192,9 @@ bool WindowLibWPE::initWindow(PlatformDisplay *platformDisplay) {
 }
 
 void WindowLibWPE::setViewSize(int width, int height) {
+    Display* display = (dynamic_cast<PlatformDisplayLibWPE*>(platformDisplay_))->native();
+    display->setScreenSize(width, height);
+
     viewWidth_ = width;
     viewHeight_ = height;
     if(WindowLibWPE::mainApp_)

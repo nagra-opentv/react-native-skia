@@ -23,6 +23,12 @@ RasterWindowContextX11::RasterWindowContextX11(GLNativeWindowType window, Platfo
         : INHERITED(params)
         , display_((dynamic_cast<PlatformDisplayX11*>(platformDisplay))->native())
         , window_(window) {
+
+    XWindowAttributes attrs;
+    XGetWindowAttributes(display_, window_, &attrs);
+    width_ = attrs.width;
+    height_= attrs.height;
+
     gc_ = XCreateGC(display_, window, 0, nullptr);
     initializeContext();
 }
@@ -33,10 +39,7 @@ void RasterWindowContextX11::setDisplayParams(const DisplayParams& params) {
 }
 
 void RasterWindowContextX11::initializeContext() {
-    XWindowAttributes attrs;
-    XGetWindowAttributes(display_, window_, &attrs);
-    width_ = attrs.width;
-    height_= attrs.height;
+
     SkImageInfo info = SkImageInfo::Make(width_, height_, displayParams_.colorType_, kPremul_SkAlphaType,
                                          displayParams_.colorSpace_);
     backbufferSurface_ = SkSurface::MakeRaster(info, &displayParams_.surfaceProps_);
