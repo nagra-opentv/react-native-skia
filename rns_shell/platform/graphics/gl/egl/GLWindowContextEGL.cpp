@@ -283,7 +283,7 @@ EGLContext GLWindowContextEGL::createSharingContext(PlatformDisplay& platformDis
     }
 
     const char* extensions = eglQueryString(display, EGL_EXTENSIONS);
-    if (isExtensionSupported(extensions, "EGL_KHR_surfaceless_context") && isExtensionSupported(extensions, "EGL_KHR_surfaceless_opengl")) {
+    if (!isExtensionSupported(extensions, "EGL_KHR_surfaceless_context") && !isExtensionSupported(extensions, "EGL_KHR_surfaceless_opengl")) {
         RNS_LOG_ERROR("Cannot create surfaceless EGL context: required extensions missing");
         return EGL_NO_CONTEXT;
     }
@@ -393,7 +393,7 @@ void GLWindowContextEGL::onSwapBuffers() {
 }
 
 void GLWindowContextEGL::swapInterval() {
-    RNS_LOG_NOT_IMPL; // Something similar to GLX_EXT_swap_control in GLX implementation ?
+    eglSwapInterval(platformDisplay_.eglDisplay(), displayParams_.disableVsync_ ? 0 : 1);
 }
 
 }  // namespace RnsShell

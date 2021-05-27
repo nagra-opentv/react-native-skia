@@ -28,12 +28,13 @@ static int ctxErrorHandler(Display *dpy, XErrorEvent *ev) {
 }
 
 static PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT;
+static PFNGLXSWAPINTERVALMESAPROC glXSwapIntervalMESA;
 
 static bool hasEXTSwapControlExtension(Display* display)
 {
     static bool initialized = false;
     if (initialized)
-        return !!glXSwapIntervalEXT;
+        return !!glXSwapIntervalEXT || !!glXSwapIntervalMESA;
     initialized = true;
 
     const char* glxExtensions = glXQueryExtensionsString(display, DefaultScreen(display));
@@ -41,8 +42,13 @@ static bool hasEXTSwapControlExtension(Display* display)
         if (strstr(glxExtensions, "GLX_EXT_swap_control")) {
             glXSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
             return !!glXSwapIntervalEXT;
-        } else
+        } else if (strstr(glxExtensions, "GLX_MESA_swap_control")) {
+            glXSwapIntervalMESA = (PFNGLXSWAPINTERVALMESAPROC)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalMESA");
+            return !!glXSwapIntervalMESA;
+        } else {
+            RNS_LOG_WARN("Neither EXT nor MESA GLX_Swap_Control is supported");
             return false;
+        }
     }
 
     return false;
@@ -193,7 +199,8 @@ sk_sp<const GrGLInterface> GLWindowContextGLX::onInitializeContext() {
                  &border_width, &depth);
     glViewport(0, 0, width_, height_);
 
-    swapInterval();
+    if (hasEXTSwapControlExtension(display_))
+        swapInterval();
     return interface ? interface : GrGLMakeNativeInterface();
 }
 
@@ -237,9 +244,13 @@ void GLWindowContextGLX::onSwapBuffers() {
 }
 
 void GLWindowContextGLX::swapInterval() {
-    if (!hasEXTSwapControlExtension(display_))
-        return;
-    glXSwapIntervalEXT(display_, window_, displayParams_.disableVsync_ ? 0 : 1);
+    if(glXSwapIntervalEXT) {
+        glXSwapIntervalEXT(display_, window_, displayParams_.disableVsync_ ? 0 : 1);
+    } else if (glXSwapIntervalMESA) {
+        glXSwapIntervalMESA(displayParams_.disableVsync_ ? 0 : 1);
+    } else {
+        RNS_LOG_WARN("No GLX Swap Control extensions available");
+    }
 }
 
 }  // namespace RnsShell

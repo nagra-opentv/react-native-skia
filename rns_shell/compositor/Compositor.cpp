@@ -99,10 +99,22 @@ void Compositor::renderLayerTree() {
         if (needsResize)
             glViewport(0, 0, viewportSize.width(), viewportSize.height());
 #endif
-
         RNS_PROFILE_API_OFF("Render Tree Pre-Paint", rootLayer_.get()->prePaint(backBuffer_.get()));
         RNS_PROFILE_API_AVG_ON("Render Tree Paint", rootLayer_.get()->paint(backBuffer_.get()));
         RNS_PROFILE_API_AVG_ON("SkSurface Flush & Submit", backBuffer_->flushAndSubmit());
+#ifdef RNS_ENABLE_FRAME_RATE_CONTROL
+        {
+            static double prevSwapTimestamp = SkTime::GetNSecs() * 1e-3;
+            double diffUs = SkTime::GetNSecs() * 1e-3 - prevSwapTimestamp;
+            int diff = RNS_TARGET_FPS_US - diffUs;
+            RNS_LOG_DEBUG(" SwapBuffer Gap : ( " << diffUs << " us)" << " FrameRateTarget : ( " << RNS_TARGET_FPS_US << " us ) " << diff);
+            if(diff > 0 ) {
+                RNS_LOG_TRACE("ZZZzzzz for : " << diff * 1e-3 << " ms");
+                std::this_thread::sleep_for (std::chrono::microseconds(diff));
+            }
+            prevSwapTimestamp = SkTime::GetNSecs() * 1e-3;
+        }
+#endif
         RNS_PROFILE_API_AVG_ON("SwapBuffers", windowContext_->swapBuffers());
         window_->didRenderFrame();
     }

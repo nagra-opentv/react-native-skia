@@ -14,6 +14,8 @@
 #include "PlatformDisplay.h"
 #include "layers/Layer.h"
 
+#define RNS_TARGET_FPS_US 16666.7 // In Microseconds
+
 namespace RnsShell {
 
 class Compositor {
