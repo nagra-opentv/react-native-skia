@@ -17,6 +17,35 @@ config("ReactSkia_config") {
   }
 }
 
+config("textlayoutmanager_config") {
+  include_dirs = [
+    ".",
+    "//ReactSkia/textlayoutmanager",
+    "//third_party/skia",
+    "//skia/config",
+  ]
+}
+
+import("//react-native/common.gni")
+rn_cxx_component("textlayoutmanager") {
+  sources = [
+    "textlayoutmanager/react/renderer/textlayoutmanager/TextLayoutManager.cpp",
+    "textlayoutmanager/RSkTextLayoutManager.cpp",
+  ]
+
+  deps = [
+     "//folly",
+     "//react-native/ReactCommon/react/renderer/attributedstring:attributedstring",
+     "//react-native/ReactCommon/react/renderer/graphics:graphics",
+     "//react-native/ReactCommon/jsi:JSIDynamic",
+     "//skia:skparagraph",
+  ]
+
+  with_exceptions = true
+  with_rtti = true
+  public_configs = [":textlayoutmanager_config"]
+}
+
 source_set("ReactSkia") {
   sources = [
     "ComponentViewRegistry.cpp",
@@ -29,6 +58,10 @@ source_set("ReactSkia") {
     "MountingManager.h",
     "RNInstance.cpp",
     "RNInstance.h",
+    "sdk/NotificationCenter.cpp",
+    "sdk/NotificationCenter.h",
+    "core_modules/RSkEventEmitter.cpp",
+    "core_modules/RSkEventEmitter.h",
     "RSkSurfaceWindow.cpp",
     "RSkSurfaceWindow.h",
     "components/RSkComponent.cpp",
@@ -50,6 +83,10 @@ source_set("ReactSkia") {
     "components/RSkComponentText.h",
     "components/RSkComponentView.cpp",
     "components/RSkComponentView.h",
+    "modules/RSkWebSocketModuleBase.h",
+    "modules/RSkWebSocketModuleBase.cpp",
+    "views/common/RSkDrawUtils.h",
+    "views/common/RSkDrawUtils.cpp",
   ]
 
   if (is_mac) {
@@ -69,6 +106,8 @@ source_set("ReactSkia") {
       "platform/linux/MainRunLoopEventBeat.cpp",
       "platform/linux/RuntimeEventBeat.h",
       "platform/linux/RuntimeEventBeat.cpp",
+      "modules/platform/nopoll/RSkWebSocketModule.cpp",
+      "modules/platform/nopoll/RSkWebSocketModule.h",
     ]
     defines = ["OS_LINUX"]
   }
@@ -114,6 +153,11 @@ source_set("ReactSkia") {
   configs += [
     ":ReactSkia_config",
   ]
+
+  if (is_linux) {
+    configs += ["//third_party/nopoll:nopoll_from_pkgconfig"]
+  }
+
 }
 
 executable("ReactSkiaApp") {

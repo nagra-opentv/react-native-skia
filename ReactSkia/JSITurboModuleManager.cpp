@@ -1,11 +1,14 @@
 #include "ReactSkia/JSITurboModuleManager.h"
+
 #include "ReactSkia/utils/RnsLog.h"
+#include "ReactSkia/version.h"
+
 
 #include "cxxreact/Instance.h"
 #include "jsi/JSIDynamic.h"
 
 #include <folly/io/async/ScopedEventBaseThread.h>
-
+#include "modules/platform/nopoll/RSkWebSocketModule.h"
 
 namespace facebook {
 namespace react {
@@ -187,22 +190,6 @@ class AppStateModule : public TurboModule {
   }
 };
 
-class WebSocketModule : public TurboModule {
- public:
-  WebSocketModule(
-      const std::string &name,
-      std::shared_ptr<CallInvoker> jsInvoker)
-      : TurboModule(name, jsInvoker) {
-    methodMap_["connect"] = MethodMetadata{4, NoOp};
-    methodMap_["send"] = MethodMetadata{2, NoOp};
-    methodMap_["sendBinary"] = MethodMetadata{2, NoOp};
-    methodMap_["ping"] = MethodMetadata{1, NoOp};
-    methodMap_["close"] = MethodMetadata{3, NoOp};
-    methodMap_["addListener"] = MethodMetadata{1, NoOp};
-    methodMap_["removeListeners"] = MethodMetadata{1, NoOp};
-  }
-};
-
 class UnimplementedTurboModule : public TurboModule {
  public:
   UnimplementedTurboModule(
@@ -231,7 +218,7 @@ JSITurboModuleManager::JSITurboModuleManager(Instance *bridgeInstance)
       std::make_shared<StaticTurboModule>("PlatformConstants", jsInvoker);
   auto rnVersion = folly::dynamic::object("major", 0)("minor", 0)("patch", 0);
   staticModule->SetConstants(folly::dynamic::object("isTesting", true)(
-      "reactNativeVersion", std::move(rnVersion)));
+      "reactNativeVersion", std::move(rnVersion)) ("osVersion",STRINGIFY(RNS_OS_VERSION)));
   modules_["PlatformConstants"] = std::move(staticModule);
 
   modules_["ExceptionsManager"] =
@@ -244,7 +231,7 @@ JSITurboModuleManager::JSITurboModuleManager(Instance *bridgeInstance)
       std::make_shared<AppStateModule>("AppState", jsInvoker);
 
   modules_["WebSocketModule"] =
-      std::make_shared<WebSocketModule>("WebSocketModule", jsInvoker);
+      std::make_shared<RSkWebSocketModule>("WebSocketModule", jsInvoker, bridgeInstance);
 
   modules_["Networking"] =
       std::make_shared<UnimplementedTurboModule>("Networking", jsInvoker);
