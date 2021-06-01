@@ -4,10 +4,10 @@
 #include "ReactSkia/views/common/RSkDrawUtils.h"
 #include <glog/logging.h>
 
-using namespace facebook::react::RSkDrawUtils;
-
 namespace facebook {
 namespace react {
+
+using namespace RSkDrawUtils;
 
 RSkComponentView::RSkComponentView(const ShadowView &shadowView)
     : RSkComponent(shadowView) {}

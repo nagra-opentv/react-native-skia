@@ -8,10 +8,10 @@
 
 #include <glog/logging.h>
 
-using namespace facebook::react::RSkDrawUtils;
-
 namespace facebook {
 namespace react {
+
+using namespace RSkDrawUtils;
 
 namespace {
 std::unique_ptr<SkBitmap> GetAsset(const char *path) {
