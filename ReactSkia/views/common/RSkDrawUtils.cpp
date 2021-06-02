@@ -38,17 +38,17 @@ enum BorderEdges {
   };
 void setPathEffect(BorderStyle borderStyle,int strokeWidth,SkPaint *paint)
 {
-    float Dash_interval[]={strokeWidth,strokeWidth/2};
-    float Dot_interval[]={0,strokeWidth+3};
+    float dashInterval[]={strokeWidth,strokeWidth/2};
+    float dotInterval[]={0,strokeWidth+3};
     
     if(borderStyle == BorderStyle::Dashed){
-         int intervalCount=(int)SK_ARRAY_COUNT(Dash_interval);
-         paint->setPathEffect(SkDashPathEffect::Make(Dash_interval,intervalCount,0));
+         int intervalCount=(int)SK_ARRAY_COUNT(dashInterval);
+         paint->setPathEffect(SkDashPathEffect::Make(dashInterval,intervalCount,0));
          paint->setStrokeJoin(SkPaint::kRound_Join);
     }
     if(borderStyle == BorderStyle::Dotted){
-         int intervalCount=(int)SK_ARRAY_COUNT(Dot_interval);
-         paint->setPathEffect(SkDashPathEffect::Make(Dot_interval,intervalCount,0));
+         int intervalCount=(int)SK_ARRAY_COUNT(dotInterval);
+         paint->setPathEffect(SkDashPathEffect::Make(dotInterval,intervalCount,0));
          paint->setStrokeJoin(SkPaint::kRound_Join);
          paint->setStrokeCap(SkPaint::kRound_Cap);
     }
@@ -95,59 +95,52 @@ void createEdge(PathMetrics pathMetrics,BorderEdges borderEdge,SkPath* path)
     bool cornerOnBottomEdge=(((borderEdge == LeftEdge) ||(borderEdge == BottomEdge ) ||(borderEdge == RightEdge)) ? true : false);
 
     auto outterSweepAngle =(growCW ? 45 : -45);
-    auto innerSweepAngle= (growCW ? -45 : +45);;
 
-    auto outterStartX= pathMetrics.outterStart.x ;
-    auto outterStartY= pathMetrics.outterStart.y ;
-    auto innerStartX= pathMetrics.innerStart.x ;
-    auto innerStartY= pathMetrics.innerStart.y ;
-    auto outterEndX= pathMetrics.outterEnd.x ;
-    auto outterEndY= pathMetrics.outterEnd.y ;
-    auto innerEndX= pathMetrics.innerEnd.x ;
-    auto innerEndY= pathMetrics.innerEnd.y ;
+    Point outterPathStart{ pathMetrics.outterStart.x,pathMetrics.outterStart.y};
+    Point innerPathStart{ pathMetrics.innerStart.x ,pathMetrics.innerStart.y};
+    Point outterPathEnd{pathMetrics.outterEnd.x,pathMetrics.outterEnd.y};
+    Point innerPathEnd{pathMetrics.innerEnd.x,pathMetrics.innerEnd.y};
 
-    auto innerEndRadius = 0;
-    auto innerStartRadius =0 ;
-    SkRect innerStartRect,innerEndRect,outterStartRect,outterEndRect;
+    SkRect outterStartRect,outterEndRect;
     Point cornerRect{0,0};
-    Point pathClosurePoint{outterStartX,outterStartY};
+    Point pathClosurePoint{outterPathStart};
 
     if(pathMetrics.startRadius){
-        cornerRect.x =((cornerOnRightEdge && verticalEdge)? outterStartX - (pathMetrics.startRadius*2):outterStartX);
-        cornerRect.y =((cornerOnBottomEdge && !verticalEdge )? outterStartY-(pathMetrics.startRadius*2): outterStartY);
+        cornerRect.x =((cornerOnRightEdge && verticalEdge)? outterPathStart.x - (pathMetrics.startRadius*2):outterPathStart.x);
+        cornerRect.y =((cornerOnBottomEdge && !verticalEdge )? outterPathStart.y-(pathMetrics.startRadius*2): outterPathStart.y);
         outterStartRect=SkRect::MakeXYWH(cornerRect.x,cornerRect.y,pathMetrics.startRadius*2,pathMetrics.startRadius*2);
     }
     if(pathMetrics.endRadius){
-        cornerRect.x =(cornerOnRightEdge ? outterEndX - (pathMetrics.endRadius*2):outterEndX );
-        cornerRect.y =(cornerOnBottomEdge ? outterEndY-(pathMetrics.endRadius*2): outterEndY);
+        cornerRect.x =(cornerOnRightEdge ? outterPathEnd.x - (pathMetrics.endRadius*2):outterPathEnd.x );
+        cornerRect.y =(cornerOnBottomEdge ? outterPathEnd.y-(pathMetrics.endRadius*2): outterPathEnd.y);
         outterEndRect=SkRect::MakeXYWH(cornerRect.x,cornerRect.y,pathMetrics.endRadius*2,pathMetrics.endRadius*2);
-        outterEndX= (verticalEdge ? outterEndX : (outterEndX - pathMetrics.endRadius));
-        outterEndY= (verticalEdge ? (outterEndY - pathMetrics.endRadius):outterEndY);
+        outterPathEnd.x= (verticalEdge ? outterPathEnd.x : (outterPathEnd.x - pathMetrics.endRadius));
+        outterPathEnd.y= (verticalEdge ? (outterPathEnd.y - pathMetrics.endRadius):outterPathEnd.y);
     }
     /*Path Building*/
-    path->moveTo(outterStartX,outterStartY);
+    path->moveTo(outterPathStart.x,outterPathStart.y);
     if(pathMetrics.startRadius){
         path->addArc(outterStartRect,pathMetrics.angle-outterSweepAngle,outterSweepAngle);
         Point centerPoint{outterStartRect.centerX(),outterStartRect.centerY()};
         pathClosurePoint.x=centerPoint.x+(pathMetrics.startRadius *cos((pathMetrics.angle-outterSweepAngle)*(M_PI/180)));
         pathClosurePoint.y=centerPoint.y+(pathMetrics.startRadius *sin((pathMetrics.angle-outterSweepAngle)*(M_PI/180)));
     }
-    path->lineTo(outterEndX,outterEndY);
+    path->lineTo(outterPathEnd.x,outterPathEnd.y);
     if(pathMetrics.endRadius){
         path->addArc(outterEndRect,pathMetrics.angle,outterSweepAngle);
     }
-    path->lineTo(innerEndX,innerEndY);
-    /*To Do Enchancement: Radius not applied to the inner side of path.
-           Need for inner Radius happens when border width < border Radius */
-    path->lineTo(innerStartX,innerStartY);
+    path->lineTo(innerPathEnd.x,innerPathEnd.y);
+    /*To Do Enchancement: Corner Radius to be applied for inner path aswell.
+           Need for inner Radius happens, when border width < border Radius */
+    path->lineTo(innerPathStart.x,innerPathStart.y);
     path->lineTo(pathClosurePoint.x,pathClosurePoint.y);
 }
-void drawRect(DrawMethod drawMethod,SkCanvas *canvas,                                        
+void drawRect(DrawMethod drawMethod,SkCanvas *canvas,
                                         Rect frame,
                                         BorderMetrics borderProps,
                                         SharedColor Color,
                                         Float opacity,
-					SkPaint *paint=NULL)
+                                        SkPaint *paint=NULL)
 {
     if(canvas == NULL) return;
 /*Case DrawRect assumes same width for all the sides.So referring left */
