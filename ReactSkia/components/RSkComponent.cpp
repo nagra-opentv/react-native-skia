@@ -38,9 +38,9 @@ void RSkComponent::onPaint(SkSurface *surface) {
 sk_sp<SkPicture> RSkComponent::getPicture() {
 
   SkPictureRecorder recorder;
-  auto frameSize = getFrameSize();
+  auto frame = getAbsoluteFrame();
 
-  auto *canvas = recorder.beginRecording(SkRect::MakeXYWH(0, 0, frameSize.width, frameSize.height));
+  auto *canvas = recorder.beginRecording(SkRect::MakeXYWH(0, 0, frame.size.width, frame.size.height));
 
   if(canvas) {
     RNS_PROFILE_API_OFF("Recording " << componentName_ << " Paint:", OnPaint(canvas));
