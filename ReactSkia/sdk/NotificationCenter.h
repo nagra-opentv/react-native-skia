@@ -28,7 +28,7 @@
 #include <mutex>
 #include <list>
 #include <algorithm>
-
+#include <iostream>
 #pragma once
 
 class NotificationCenter {
@@ -108,9 +108,10 @@ unsigned int NotificationCenter::on(std::string eventName, std::function<void (A
 template <typename... Args>
 void NotificationCenter::emit(std::string eventName, Args... args) {
     std::list<std::shared_ptr<Listener<Args...>>> handlers;
-    
     {
-        std::lock_guard<std::mutex> lock(mutex);
+	std::cout <<"[NotificationCenter::emit] entry"<<std::endl;
+	std::cout <<"[NotificationCenter::emit][eventName]"<<eventName<<std::endl;
+	std::lock_guard<std::mutex> lock(mutex);
 
         auto range = listeners.equal_range(eventName);
         handlers.resize(std::distance(range.first, range.second));
@@ -122,7 +123,9 @@ void NotificationCenter::emit(std::string eventName, Args... args) {
     }
 
     for (auto& h : handlers) {
+	std::cout <<"[NotificationCenter::emit]caling CallBack"<<std::endl;
         h->cb(args...);
+	std::cout <<"[NotificationCenter::emit]after calling CallBack"<<std::endl;
     }        
 }
 

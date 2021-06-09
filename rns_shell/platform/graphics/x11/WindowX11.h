@@ -11,6 +11,7 @@
 #include "ReactSkia/utils/RnsUtils.h"
 
 #include <X11/Xlib.h>
+#include <X11/X.h>
 #if USE(GLX)
 #include <GL/glx.h>
 #endif
@@ -20,7 +21,8 @@
 
 #include "Window.h"
 #include "PlatformDisplay.h"
-
+#include "RNSKeyCodeMapping.h"
+#include "NotificationCenter.h"
 typedef Window XWindow;
 
 namespace RnsShell {
@@ -56,6 +58,7 @@ public:
 
     static SkTDynamicHash<WindowX11, XWindow> gWindowMap;
     void setRequestedDisplayParams(const DisplayParams&, bool allowReattach) override;
+    rns_key_t  keyIdentifierForX11KeyCode(KeySym keycode);
 
 private:
     void closeWindow();
@@ -68,7 +71,8 @@ private:
 #endif
     int          MSAASampleCount_;
     Atom         wmDeleteMessage_;
-
+    void onKey(int eventKeyType, int eventKeyAction);
+    NotificationCenter keyNotification;
     typedef Window INHERITED;
 };
 

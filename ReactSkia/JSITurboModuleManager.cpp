@@ -2,7 +2,7 @@
 
 #include "ReactSkia/utils/RnsLog.h"
 #include "ReactSkia/version.h"
-
+#include "sdk/TVNavigationEventEmitter.h"
 
 #include "cxxreact/Instance.h"
 #include "jsi/JSIDynamic.h"
@@ -226,7 +226,11 @@ JSITurboModuleManager::JSITurboModuleManager(Instance *bridgeInstance)
 
   modules_["Timing"] =
       std::make_shared<TimingModule>("Timing", jsInvoker, bridgeInstance);
-
+  std::cout <<"Mapping a event handler"<<std::endl;
+  modules_["TVNavigationEventEmitter"] =
+      std::make_shared<RSkTVNavigationEventEmitter>("TVNavigationEventEmitter",
+		                                     jsInvoker, 
+						     bridgeInstance);
   modules_["AppState"] =
       std::make_shared<AppStateModule>("AppState", jsInvoker);
 

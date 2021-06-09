@@ -14,8 +14,10 @@
 #include "src/core/SkTDynamicHash.h"
 
 #include "Window.h"
+#include "NotificationCenter.h"
 #include "PlatformDisplay.h"
 #include "platform/graphics/libwpe/PlatformDisplayLibWPE.h"
+#include "RNSKeyCodeMapping.h"
 #ifdef RNS_SHELL_HAS_GPU_SUPPORT
 #include "GLWindowContext.h"
 #endif
@@ -62,7 +64,6 @@ public:
     static SkTDynamicHash<WindowLibWPE, WPEWindowID> gWindowMap;
     static GMainLoop       *mainLoop_;
     static Application     *mainApp_; // Addded for triggering resize from window event.
-
 private:
     void setViewSize(int width, int height);
     bool initViewBackend(wpe_view_backend* viewBackend);
@@ -77,8 +78,10 @@ private:
     int     viewWidth_;
     int     viewHeight_;
     int     MSAASampleCount_;
-
+    void onKey(int keyType,int eventKeyAction);
     typedef Window INHERITED;
+    rns_key_t keyIdentifierForWPEKeyCode(int keyCode);
+    NotificationCenter keyNotification;
 };
 
 }   // namespace RnsShell

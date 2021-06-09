@@ -21,7 +21,16 @@
 #include "WindowContextFactory.h"
 
 #include "x11/PlatformDisplayX11.h"
-
+//#include "tools/skui/ModifierKey.h"
+//#include "tools/timer/Timer.h"
+#include <X11/X.h>
+//extern "C" {
+//#include "keysym2ucs.h"
+//}
+#include <iostream>
+#define X11KeyRelease 0
+#define X11KeyPress   1
+using namespace std;
 namespace RnsShell {
 
 SkTDynamicHash<WindowX11, XWindow> WindowX11::gWindowMap;
@@ -231,6 +240,13 @@ void WindowX11::closeWindow() {
 }
 
 bool WindowX11::handleEvent(const XEvent& event) {
+      int keycode =1;
+      int shiftLevel= (event.xkey.state & ShiftMask) ? 1 : 0;
+      KeySym keysym = XkbKeycodeToKeysym(display_, 
+		                         event.xkey.keycode,
+                                               0, 
+					       shiftLevel
+					       );
     switch (event.type) {
         case MapNotify:
             break;
@@ -241,7 +257,14 @@ bool WindowX11::handleEvent(const XEvent& event) {
                 return true;
             }
             break;
-
+        case KeyRelease:
+	    keycode = keyIdentifierForX11KeyCode(keysym);
+            onKey(keycode,X11KeyRelease);
+	    break;
+	case KeyPress:
+	    keycode = keyIdentifierForX11KeyCode(keysym);
+	    onKey(keycode,X11KeyPress);
+            break; 
         case ButtonPress:
             RNS_LOG_NOT_IMPL;
             break;
@@ -268,5 +291,16 @@ void WindowX11::setRequestedDisplayParams(const DisplayParams& params, bool allo
     RNS_LOG_NOT_IMPL;
     //INHERITED::setRequestedDisplayParams(params, allowReattach);
 }
-
+void WindowX11::onKey(int eventKeyType, int eventKeyAction)
+{
+    cout <<"[WindowLibWPE][onKey]:entery"<<endl;
+    std::string eventName = "RCTTVNavigationEventNotification";
+    /*
+     * Add the eventKeyAction as parameter
+     * keyNotification.emit(eventName,keyType,eventKeyAction);
+     * 
+     * */
+    keyNotification.emit(eventName, eventKeyType, eventKeyAction);
+    return;
+}
 }   // namespace RnsShell

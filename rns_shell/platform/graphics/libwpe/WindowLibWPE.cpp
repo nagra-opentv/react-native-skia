@@ -10,9 +10,9 @@
 #include "src/utils/SkUTF.h"
 #include "WindowContextFactory.h"
 #include "WindowLibWPE.h"
-
 #include "platform/linux/TaskLoop.h"
-
+#include "RNSKeyCodeMapping.h"
+using namespace std; 
 namespace RnsShell {
 
 SkTDynamicHash<WindowLibWPE, WPEWindowID> WindowLibWPE::gWindowMap;
@@ -51,8 +51,15 @@ bool WindowLibWPE::initViewBackend(wpe_view_backend* viewBackend) {
     static struct wpe_view_backend_input_client s_inputClient = {
         // handle_keyboard_event
         [](void* data, struct wpe_input_keyboard_event* event) {
-            RNS_LOG_NOT_IMPL;
+            //RNS_LOG_NOT_IMPL;
             auto& winwpe = *reinterpret_cast<WindowLibWPE*>(data);
+            if(event->pressed)
+           {
+	       cout<<"KeyBoard key pressed: key_code:"<<event->key_code<<endl;
+	       int keycode = winwpe.keyIdentifierForWPEKeyCode(event->key_code);
+               winwpe.onKey(keycode,event->pressed);
+           }
+
             if (event->pressed
                 && event->modifiers & wpe_input_keyboard_modifier_control
                 && event->modifiers & wpe_input_keyboard_modifier_shift
@@ -244,6 +251,17 @@ void WindowLibWPE::setRequestedDisplayParams(const DisplayParams& params, bool a
 #endif
 
     INHERITED::setRequestedDisplayParams(params, allowReattach);
+}
+void WindowLibWPE::onKey(int  keyType,int eventKeyAction){
+    cout <<"[WindowLibWPE][onKey]:entery"<<endl;
+    std::string eventName = "RCTTVNavigationEventNotification";
+    /*
+     * Add the eventKeyAction as parameter
+     * keyNotification.emit(eventName,keyType,eventKeyAction);
+     * 
+     * */
+    keyNotification.emit(eventName,keyType,eventKeyAction);
+    return;
 }
 
 }   // namespace RnsShell

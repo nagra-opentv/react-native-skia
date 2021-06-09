@@ -36,6 +36,9 @@
 
 namespace facebook {
 namespace react {
+void reactGlogLoggingHook(const std::string &message,unsigned int logLevel) {
+     LOG(WARNING) << "REACTNATIVEJS [" << logLevel << "]: " << message.c_str();
+}
 
 class JSCExecutorFactory : public JSExecutorFactory {
  public:
@@ -53,6 +56,10 @@ class JSCExecutorFactory : public JSExecutorFactory {
       //   [NSString stringWithUTF8String:message.c_str()]);
       // };
       // react::bindNativeLogger(runtime, iosLoggingBinder);
+      react::Logger glogLogger =  static_cast<void (*)(
+		                  const std::string &,
+		                  unsigned int)>(&reactGlogLoggingHook);
+      react::bindNativeLogger(runtime, glogLogger);
       TurboModuleBinding::install(
           runtime, std::move(jsiTurboModuleManager->GetProvider()));
     };
@@ -84,9 +91,13 @@ class MessageQueueThreadImpl : public MessageQueueThread {
 };
 
 RNInstance::RNInstance() {
+  std::cout <<"called RNInstance"<<std::endl;
   InitializeJSCore();
+  std::cout <<"calling InitializeJSCore"<<std::endl;
   RegisterComponents();
+  std::cout <<"calling RegisterComponents"<<std::endl;
   InitializeFabric();
+  std::cout <<"calling InitializeFabrics"<<std::endl;
 }
 
 RNInstance::~RNInstance() {}
@@ -144,6 +155,8 @@ void RNInstance::InitializeJSCore() {
 }
 
 void RNInstance::InitializeFabric() {
+  
+  std::cout <<"calling InitializeFabric"<<std::endl;
   facebook::react::ContextContainer::Shared contextContainer =
       std::make_shared<facebook::react::ContextContainer const>();
   std::shared_ptr<const facebook::react::ReactNativeConfig> reactNativeConfig =
