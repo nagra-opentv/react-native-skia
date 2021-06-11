@@ -47,7 +47,6 @@ typedef enum _rns_key
     RNS_KEY_GUIA,
     RNS_KEY_UNKNOWN
 }rns_key_t;
-
 static std::string RNSKeyMap[RNS_KEY_UNKNOWN+1]={
 "Right", //RNS_KEY_RIGHT
 "Left",  //RNS_KEY_LEFT
@@ -55,7 +54,7 @@ static std::string RNSKeyMap[RNS_KEY_UNKNOWN+1]={
 "Down",
 "Select",
 "PowerOff",
-"AudioMedia"
+"AudioMedia",
 "Menu",
 "AudioLowerVolume",
 "AudioRaiseVolume",
@@ -70,7 +69,6 @@ static std::string RNSKeyMap[RNS_KEY_UNKNOWN+1]={
 "AudioNext",
 "AudioRewind",
 "AudioForward",
-"AudioPrev",
 "AudioPrev",
 "Green",
 "Red",
@@ -93,5 +91,4 @@ static std::string RNSKeyMap[RNS_KEY_UNKNOWN+1]={
 "Mute",
 "GUIA",
 "UnKown"};
-
 #endif// __RNSKeyCodeMapping_h__
