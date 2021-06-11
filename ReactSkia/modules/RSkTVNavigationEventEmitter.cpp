@@ -1,7 +1,6 @@
-#include "TVNavigationEventEmitter.h"
+#include "RSkTVNavigationEventEmitter.h"
 #include <glog/logging.h>
-#include <iostream>
-#include "RNSKeyCodeMapping.h"
+#include "sdk/RNSKeyCodeMapping.h"
 using namespace std;
 namespace facebook {
 namespace react {
@@ -15,7 +14,6 @@ RSkTVNavigationEventEmitter::RSkTVNavigationEventEmitter(
 
 }
 void RSkTVNavigationEventEmitter::onTVKeyEvent(int  eventType,int eventKeyAction/*, const unsigned int tag*/) {
-    cout <<"RSkTVNavigationEventEmitter::onTVKeyEvent "<<endl;
     folly::dynamic parameters = folly::dynamic::object();
     parameters["eventType"] = RNSKeyMap[eventType];
     parameters["tag"] = 0xFFFF;
@@ -24,15 +22,12 @@ void RSkTVNavigationEventEmitter::onTVKeyEvent(int  eventType,int eventKeyAction
 }
 
 void RSkTVNavigationEventEmitter::startObserving() {
-     cout <<"RSkTVNavigationEventEmitter::startObserving"<<endl;
     // use the NotificationManager to register for TV Keys
     std::function<void(int,int)> handler = std::bind(&RSkTVNavigationEventEmitter::onTVKeyEvent, this, std::placeholders::_1,std::placeholders::_2);
     eventId_ = keyEventNotification.addListener(tvEventName_, handler);
-    cout <<"&&&&&&&&& tvEventName_  &&&&&&&&"<<tvEventName_<<endl;
 }
 
 void RSkTVNavigationEventEmitter::stopObserving() {
-    cout <<"RSkTVNavigationEventEmitter::stopObserving"<<endl;
     keyEventNotification.removeListener(eventId_);
 }
 

@@ -53,15 +53,12 @@ bool WindowLibWPE::initViewBackend(wpe_view_backend* viewBackend) {
         [](void* data, struct wpe_input_keyboard_event* event) {
             //RNS_LOG_NOT_IMPL;
             auto& winwpe = *reinterpret_cast<WindowLibWPE*>(data);
-	    int keycode = winwpe.keyIdentifierForWPEKeyCode(event->key_code);
-            if(event->pressed)
-           {
-	       cout<<"KeyBoard key pressed: key_code:"<<event->key_code<<endl;
+            int keycode = winwpe.keyIdentifierForWPEKeyCode(event->key_code);
+            if(event->pressed){
                winwpe.onKey(keycode,event->pressed);
-           }else
-	    {
+            }else{
                winwpe.onKey(keycode,event->pressed);
-	    }
+            }
             if (event->pressed
                 && event->modifiers & wpe_input_keyboard_modifier_control
                 && event->modifiers & wpe_input_keyboard_modifier_shift
@@ -255,13 +252,7 @@ void WindowLibWPE::setRequestedDisplayParams(const DisplayParams& params, bool a
     INHERITED::setRequestedDisplayParams(params, allowReattach);
 }
 void WindowLibWPE::onKey(int  keyType,int eventKeyAction){
-    cout <<"[WindowLibWPE][onKey]:entery"<<endl;
     std::string eventName = "RCTTVNavigationEventNotification";
-    /*
-     * Add the eventKeyAction as parameter
-     * keyNotification.emit(eventName,keyType,eventKeyAction);
-     * 
-     * */
     keyNotification.emit(eventName,keyType,eventKeyAction);
     return;
 }

@@ -27,7 +27,6 @@
 //extern "C" {
 //#include "keysym2ucs.h"
 //}
-#include <iostream>
 #define X11KeyRelease 0
 #define X11KeyPress   1
 using namespace std;
@@ -293,13 +292,7 @@ void WindowX11::setRequestedDisplayParams(const DisplayParams& params, bool allo
 }
 void WindowX11::onKey(int eventKeyType, int eventKeyAction)
 {
-    cout <<"[WindowLibWPE][onKey]:entery"<<endl;
     std::string eventName = "RCTTVNavigationEventNotification";
-    /*
-     * Add the eventKeyAction as parameter
-     * keyNotification.emit(eventName,keyType,eventKeyAction);
-     * 
-     * */
     keyNotification.emit(eventName, eventKeyType, eventKeyAction);
     return;
 }
