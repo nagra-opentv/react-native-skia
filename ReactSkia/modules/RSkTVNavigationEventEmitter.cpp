@@ -1,6 +1,6 @@
 #include "RSkTVNavigationEventEmitter.h"
-#include <glog/logging.h>
-#include "sdk/RNSKeyCodeMapping.h"
+#include "ReactSkia/utils/RnsLog.h"
+#include "ReactSkia/sdk/RNSKeyCodeMapping.h"
 using namespace std;
 namespace facebook {
 namespace react {

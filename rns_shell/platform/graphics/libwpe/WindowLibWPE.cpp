@@ -11,7 +11,6 @@
 #include "WindowContextFactory.h"
 #include "WindowLibWPE.h"
 #include "platform/linux/TaskLoop.h"
-#include "RNSKeyCodeMapping.h"
 using namespace std; 
 namespace RnsShell {
 
@@ -51,14 +50,9 @@ bool WindowLibWPE::initViewBackend(wpe_view_backend* viewBackend) {
     static struct wpe_view_backend_input_client s_inputClient = {
         // handle_keyboard_event
         [](void* data, struct wpe_input_keyboard_event* event) {
-            //RNS_LOG_NOT_IMPL;
             auto& winwpe = *reinterpret_cast<WindowLibWPE*>(data);
             int keycode = winwpe.keyIdentifierForWPEKeyCode(event->key_code);
-            if(event->pressed){
-               winwpe.onKey(keycode,event->pressed);
-            }else{
-               winwpe.onKey(keycode,event->pressed);
-            }
+            winwpe.onKey(keycode,event->pressed);
             if (event->pressed
                 && event->modifiers & wpe_input_keyboard_modifier_control
                 && event->modifiers & wpe_input_keyboard_modifier_shift

@@ -21,8 +21,8 @@
 
 #include "Window.h"
 #include "PlatformDisplay.h"
-#include "RNSKeyCodeMapping.h"
-#include "NotificationCenter.h"
+#include "ReactSkia/sdk/RNSKeyCodeMapping.h"
+#include "ReactSkia/sdk/NotificationCenter.h"
 typedef Window XWindow;
 
 namespace RnsShell {

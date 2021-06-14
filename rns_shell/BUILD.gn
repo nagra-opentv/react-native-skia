@@ -11,8 +11,7 @@ config("rns_shell_config") {
 
   if(is_linux) {
     include_dirs += [ ".",
-                      "//ReactSkia/sdk/",
-                      "//sk_app/unix/platform/window/x11" ]
+                      "//ReactSkia/sdk/" ]
 
     defines = ["GOOGLE_STRIP_LOG=0"]
     extra_cppflags = getenv("BUILD_CPPFLAGS")

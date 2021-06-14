@@ -1,6 +1,6 @@
 #ifndef RNS_KEYCODE_MAPPING_H
 #define RNS_KEYCODE_MAPPING_H
-typedef enum _rns_key
+typedef enum rnsKey
 {
     RNS_KEY_Right,
     RNS_KEY_Left,

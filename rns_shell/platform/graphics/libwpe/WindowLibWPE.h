@@ -14,10 +14,10 @@
 #include "src/core/SkTDynamicHash.h"
 
 #include "Window.h"
-#include "NotificationCenter.h"
+#include "ReactSkia/sdk/NotificationCenter.h"
 #include "PlatformDisplay.h"
 #include "platform/graphics/libwpe/PlatformDisplayLibWPE.h"
-#include "RNSKeyCodeMapping.h"
+#include "ReactSkia/sdk/RNSKeyCodeMapping.h"
 #ifdef RNS_SHELL_HAS_GPU_SUPPORT
 #include "GLWindowContext.h"
 #endif

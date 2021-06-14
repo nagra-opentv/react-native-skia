@@ -21,12 +21,6 @@
 #include "WindowContextFactory.h"
 
 #include "x11/PlatformDisplayX11.h"
-//#include "tools/skui/ModifierKey.h"
-//#include "tools/timer/Timer.h"
-#include <X11/X.h>
-//extern "C" {
-//#include "keysym2ucs.h"
-//}
 #define X11KeyRelease 0
 #define X11KeyPress   1
 using namespace std;
@@ -239,7 +233,7 @@ void WindowX11::closeWindow() {
 }
 
 bool WindowX11::handleEvent(const XEvent& event) {
-      int keycode =1;
+      int keycode =-1;
       int shiftLevel= (event.xkey.state & ShiftMask) ? 1 : 0;
       KeySym keysym = XkbKeycodeToKeysym(display_, 
 		                         event.xkey.keycode,
