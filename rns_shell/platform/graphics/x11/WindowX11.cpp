@@ -231,8 +231,6 @@ void WindowX11::closeWindow() {
 }
 
 bool WindowX11::handleEvent(const XEvent& event) {
-    rnsKey keycode= RNS_KEY_UnKnown;
-    rnsKeyAction keyAction=RNS_KEY_Press;
     int shiftLevel= (event.xkey.state & ShiftMask) ? 1 : 0;
     KeySym keysym = XkbKeycodeToKeysym(display_, event.xkey.keycode,0,shiftLevel);
     switch (event.type) {
@@ -246,15 +244,9 @@ bool WindowX11::handleEvent(const XEvent& event) {
             }
             break;
 
-	case KeyRelease:
-            keycode = keyIdentifierForX11KeyCode(keysym);
-            keyAction=RNS_KEY_Release;
-            onKey(keycode,keyAction);
-            break;
+        case KeyRelease:
         case KeyPress:
-            keycode = keyIdentifierForX11KeyCode(keysym);
-            keyAction=RNS_KEY_Press;
-            onKey(keycode,keyAction);
+            onKey( keyIdentifierForX11KeyCode(keysym), (event.type == KeyRelease ) ? RNS_KEY_Release : RNS_KEY_Press);
             break; 
         case ButtonPress:
             RNS_LOG_NOT_IMPL;
