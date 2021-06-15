@@ -58,7 +58,6 @@ public:
 
     static SkTDynamicHash<WindowX11, XWindow> gWindowMap;
     void setRequestedDisplayParams(const DisplayParams&, bool allowReattach) override;
-    rns_key_t  keyIdentifierForX11KeyCode(KeySym keycode);
 
 private:
     void closeWindow();
@@ -71,7 +70,8 @@ private:
 #endif
     int          MSAASampleCount_;
     Atom         wmDeleteMessage_;
-    void onKey(int eventKeyType, int eventKeyAction);
+    void onKey(rns_key_t eventKeyType, rns_key_status_t eventKeyAction);
+    rns_key_t  keyIdentifierForX11KeyCode(KeySym keycode);
     NotificationCenter keyNotification;
     typedef Window INHERITED;
 };

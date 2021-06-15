@@ -10,8 +10,7 @@ config("rns_shell_config") {
   include_dirs = [ "." ]
 
   if(is_linux) {
-    include_dirs += [ ".",
-                      "//ReactSkia/sdk/" ]
+    include_dirs += [ "."]
 
     defines = ["GOOGLE_STRIP_LOG=0"]
     extra_cppflags = getenv("BUILD_CPPFLAGS")
@@ -74,7 +73,7 @@ if(is_linux && gl_display_backend == "libwpe") {
     "platform/graphics/libwpe/PlatformDisplayLibWPE.cpp",
     "platform/graphics/libwpe/PlatformDisplayLibWPE.h",
     "platform/graphics/libwpe/WindowLibWPE.cpp",
-    "platform/graphics/libwpe/WpeKeyCodeMapping.cpp",
+    "platform/graphics/libwpe/WpeKeyMap.cpp",
   ]
   if(gl_has_gpu) {
     libwpe_platform_source += [ "platform/graphics/gl/egl/GLWindowContextEGLLibWPE.cpp" ]

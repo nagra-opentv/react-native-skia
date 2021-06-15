@@ -1,4 +1,5 @@
 #include "sdk/NotificationCenter.h"
+#include "sdk/RNSKeyCodeMapping.h"
 #include "core_modules/RSkEventEmitter.h"
 #include "tools/skui/Key.h"
 
@@ -13,7 +14,7 @@ class RSkTVNavigationEventEmitter final: public RSkEventEmitter {
 
         NotificationCenter keyEventNotification;
 
-        void onTVKeyEvent(int  eventType,int eventKeyAction/*, const unsigned int*/);
+        void onTVKeyEvent(rns_key_t  eventType,rns_key_status_t eventKeyAction);
 
     public:
         RSkTVNavigationEventEmitter(

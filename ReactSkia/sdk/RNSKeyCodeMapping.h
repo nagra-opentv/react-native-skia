@@ -1,7 +1,7 @@
 #ifndef RNS_KEYCODE_MAPPING_H
 #define RNS_KEYCODE_MAPPING_H
-typedef enum rnsKey
-{
+#include <iostream>
+typedef enum rnsKey{
     RNS_KEY_Right,
     RNS_KEY_Left,
     RNS_KEY_Up,
@@ -44,12 +44,17 @@ typedef enum rnsKey
     RNS_KEY_Cancel,
     RNS_KEY_Mute,
     RNS_KEY_Guia,
-    RNS_KEY_UnKnown
+    RNS_KEY_UnKnown,
+    RNS_KEY_End
 }rns_key_t;
-static std::string RNSKeyMap[RNS_KEY_UnKnown+1]=
-{
-    "Right", //RNS_KEY_RIGHT
-    "Left",  //RNS_KEY_LEFT
+
+typedef enum rnsKeyStatus{
+   RNS_KEY_Press,
+   RNS_KEY_Release
+}rns_key_status_t;
+static std::string RNSKeyMap[RNS_KEY_End]={
+    "Right",
+    "Left",
     "Up",
     "Down",
     "Select",

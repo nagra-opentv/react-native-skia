@@ -21,9 +21,6 @@
 #include "WindowContextFactory.h"
 
 #include "x11/PlatformDisplayX11.h"
-#define X11KeyRelease 0
-#define X11KeyPress   1
-using namespace std;
 namespace RnsShell {
 
 SkTDynamicHash<WindowX11, XWindow> WindowX11::gWindowMap;
@@ -233,13 +230,13 @@ void WindowX11::closeWindow() {
 }
 
 bool WindowX11::handleEvent(const XEvent& event) {
-      int keycode =-1;
+      rns_key_t keycode= RNS_KEY_UnKnown;
+      rns_key_status_t keyAction=RNS_KEY_Press;
       int shiftLevel= (event.xkey.state & ShiftMask) ? 1 : 0;
       KeySym keysym = XkbKeycodeToKeysym(display_, 
-		                         event.xkey.keycode,
+                             event.xkey.keycode,
                                                0, 
-					       shiftLevel
-					       );
+                             shiftLevel);
     switch (event.type) {
         case MapNotify:
             break;
@@ -251,12 +248,14 @@ bool WindowX11::handleEvent(const XEvent& event) {
             }
             break;
         case KeyRelease:
-	    keycode = keyIdentifierForX11KeyCode(keysym);
-            onKey(keycode,X11KeyRelease);
-	    break;
-	case KeyPress:
-	    keycode = keyIdentifierForX11KeyCode(keysym);
-	    onKey(keycode,X11KeyPress);
+            keycode = keyIdentifierForX11KeyCode(keysym);
+            keyAction=RNS_KEY_Release;
+            onKey(keycode,keyAction);
+            break;
+        case KeyPress:
+            keycode = keyIdentifierForX11KeyCode(keysym);
+	    keyAction=RNS_KEY_Press;
+            onKey(keycode,keyAction);
             break; 
         case ButtonPress:
             RNS_LOG_NOT_IMPL;
@@ -284,7 +283,7 @@ void WindowX11::setRequestedDisplayParams(const DisplayParams& params, bool allo
     RNS_LOG_NOT_IMPL;
     //INHERITED::setRequestedDisplayParams(params, allowReattach);
 }
-void WindowX11::onKey(int eventKeyType, int eventKeyAction)
+void WindowX11::onKey(rns_key_t eventKeyType, rns_key_status_t eventKeyAction)
 {
     std::string eventName = "RCTTVNavigationEventNotification";
     keyNotification.emit(eventName, eventKeyType, eventKeyAction);

@@ -10,14 +10,15 @@
 
 #include <glib.h>
 
+#include "ReactSkia/sdk/NotificationCenter.h"
+#include "ReactSkia/sdk/RNSKeyCodeMapping.h"
+
 #include "include/private/SkChecksum.h"
 #include "src/core/SkTDynamicHash.h"
 
 #include "Window.h"
-#include "ReactSkia/sdk/NotificationCenter.h"
 #include "PlatformDisplay.h"
 #include "platform/graphics/libwpe/PlatformDisplayLibWPE.h"
-#include "ReactSkia/sdk/RNSKeyCodeMapping.h"
 #ifdef RNS_SHELL_HAS_GPU_SUPPORT
 #include "GLWindowContext.h"
 #endif
@@ -78,7 +79,7 @@ private:
     int     viewWidth_;
     int     viewHeight_;
     int     MSAASampleCount_;
-    void onKey(int keyType,int eventKeyAction);
+    void onKey(rns_key_t keyType,rns_key_status_t eventKeyAction);
     typedef Window INHERITED;
     rns_key_t keyIdentifierForWPEKeyCode(int keyCode);
     NotificationCenter keyNotification;

@@ -3,7 +3,7 @@ import { View, AppRegistry, Image, Text, TVEventHandler } from 'react-native';
 
 console.log('TVEventHandler: ', TVEventHandler);
 
-class SimpleViewApp extends React.Component {
+class TvEventTestApp extends React.Component {
   constructor(props) {
     super(props);
 
@@ -74,4 +74,4 @@ class SimpleViewApp extends React.Component {
   }
 }
 
-AppRegistry.registerComponent('SimpleViewApp', () => SimpleViewApp);
+AppRegistry.registerComponent('TvEventTestApp', () => TvEventTestApp);

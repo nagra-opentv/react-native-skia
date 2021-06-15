@@ -1,6 +1,6 @@
-#include "WindowLibWPE.h"
 #include <wpe/wpe.h>
-#include "RNSKeyCodeMapping.h"
+#include "ReactSkia/sdk/RNSKeyCodeMapping.h"
+#include "WindowLibWPE.h"
 using namespace std;
 rns_key_t  RnsShell::WindowLibWPE::keyIdentifierForWPEKeyCode(int keyCode)
 {
