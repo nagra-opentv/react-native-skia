@@ -46,12 +46,12 @@ typedef enum rnsKey{
     RNS_KEY_Guia,
     RNS_KEY_UnKnown,
     RNS_KEY_End
-}rns_key_t;
+}rnsKey;
 
-typedef enum rnsKeyStatus{
-   RNS_KEY_Press,
-   RNS_KEY_Release
-}rns_key_status_t;
+typedef enum rnsKeyAction{
+    RNS_KEY_Press,
+    RNS_KEY_Release
+}rnsKeyAction;
 static std::string RNSKeyMap[RNS_KEY_End]={
     "Right",
     "Left",
@@ -95,5 +95,6 @@ static std::string RNSKeyMap[RNS_KEY_End]={
     "cancel",
     "Mute",
     "Guia",
-    "UnKown" };
+    "UnKown" 
+};
 #endif// __RNSKeyCodeMapping_h__

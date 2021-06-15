@@ -51,7 +51,7 @@ bool WindowLibWPE::initViewBackend(wpe_view_backend* viewBackend) {
         // handle_keyboard_event
         [](void* data, struct wpe_input_keyboard_event* event) {
             auto& winwpe = *reinterpret_cast<WindowLibWPE*>(data);
-            rns_key_t keycode = winwpe.keyIdentifierForWPEKeyCode(event->key_code);
+            rnsKey keycode = winwpe.keyIdentifierForWPEKeyCode(event->key_code);
             winwpe.onKey(keycode,event->pressed ?RNS_KEY_Press:RNS_KEY_Release);
             if (event->pressed
                 && event->modifiers & wpe_input_keyboard_modifier_control
@@ -245,7 +245,7 @@ void WindowLibWPE::setRequestedDisplayParams(const DisplayParams& params, bool a
 
     INHERITED::setRequestedDisplayParams(params, allowReattach);
 }
-void WindowLibWPE::onKey(rns_key_t keyType, rns_key_status_t eventKeyAction){
+void WindowLibWPE::onKey(rnsKey keyType, rnsKeyAction eventKeyAction){
     std::string eventName = "RCTTVNavigationEventNotification";
     keyNotification.emit(eventName,keyType,eventKeyAction);
     return;

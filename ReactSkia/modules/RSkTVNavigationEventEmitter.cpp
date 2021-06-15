@@ -11,7 +11,7 @@ RSkTVNavigationEventEmitter::RSkTVNavigationEventEmitter(
     Instance *bridgeInstance)
     : RSkEventEmitter(name, jsInvoker, bridgeInstance){}
 
-void RSkTVNavigationEventEmitter::onTVKeyEvent(rns_key_t  eventType,rns_key_status_t eventKeyAction) {
+void RSkTVNavigationEventEmitter::onTVKeyEvent(rnsKey  eventType,rnsKeyAction eventKeyAction) {
     folly::dynamic parameters = folly::dynamic::object();
     parameters["eventType"] = RNSKeyMap[eventType];
     //parameters["tag"] = 0xFFFF; //TODO need to analyze and value for Tag.
@@ -21,7 +21,7 @@ void RSkTVNavigationEventEmitter::onTVKeyEvent(rns_key_t  eventType,rns_key_stat
 
 void RSkTVNavigationEventEmitter::startObserving() {
     // use the NotificationManager to register for TV Keys
-    std::function<void(rns_key_t,rns_key_status_t)> handler = std::bind(&RSkTVNavigationEventEmitter::onTVKeyEvent, this, std::placeholders::_1,std::placeholders::_2);
+    std::function<void(rnsKey,rnsKeyAction)> handler = std::bind(&RSkTVNavigationEventEmitter::onTVKeyEvent, this, std::placeholders::_1,std::placeholders::_2);
     eventId_ = keyEventNotification.addListener(tvEventName_, handler);
 }
 

@@ -10,11 +10,11 @@ class RSkTVNavigationEventEmitter final: public RSkEventEmitter {
     private:
         std::vector<std::string> events_ = {"onHWKeyEvent"};
         std::string tvEventName_ = "RCTTVNavigationEventNotification";
-        unsigned int eventId_ = 0xFFF; // Some undefined ID
+        unsigned int eventId_ = UINT_MAX; // Some undefined ID
 
         NotificationCenter keyEventNotification;
 
-        void onTVKeyEvent(rns_key_t  eventType,rns_key_status_t eventKeyAction);
+        void onTVKeyEvent(rnsKey  eventType,rnsKeyAction eventKeyAction);
 
     public:
         RSkTVNavigationEventEmitter(

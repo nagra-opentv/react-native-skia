@@ -2,8 +2,7 @@
 #include "ReactSkia/sdk/RNSKeyCodeMapping.h"
 #include "WindowLibWPE.h"
 using namespace std;
-rns_key_t  RnsShell::WindowLibWPE::keyIdentifierForWPEKeyCode(int keyCode)
-{
+rnsKey  RnsShell::WindowLibWPE::keyIdentifierForWPEKeyCode(int keyCode){
     switch (keyCode) {
     case WPE_KEY_Left: return RNS_KEY_Left;
     case WPE_KEY_Right: return RNS_KEY_Right;

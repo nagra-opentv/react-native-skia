@@ -230,13 +230,10 @@ void WindowX11::closeWindow() {
 }
 
 bool WindowX11::handleEvent(const XEvent& event) {
-      rns_key_t keycode= RNS_KEY_UnKnown;
-      rns_key_status_t keyAction=RNS_KEY_Press;
-      int shiftLevel= (event.xkey.state & ShiftMask) ? 1 : 0;
-      KeySym keysym = XkbKeycodeToKeysym(display_, 
-                             event.xkey.keycode,
-                                               0, 
-                             shiftLevel);
+    rnsKey keycode= RNS_KEY_UnKnown;
+    rnsKeyAction keyAction=RNS_KEY_Press;
+    int shiftLevel= (event.xkey.state & ShiftMask) ? 1 : 0;
+    KeySym keysym = XkbKeycodeToKeysym(display_, event.xkey.keycode,0,shiftLevel);
     switch (event.type) {
         case MapNotify:
             break;
@@ -254,7 +251,7 @@ bool WindowX11::handleEvent(const XEvent& event) {
             break;
         case KeyPress:
             keycode = keyIdentifierForX11KeyCode(keysym);
-	    keyAction=RNS_KEY_Press;
+            keyAction=RNS_KEY_Press;
             onKey(keycode,keyAction);
             break; 
         case ButtonPress:
@@ -283,8 +280,7 @@ void WindowX11::setRequestedDisplayParams(const DisplayParams& params, bool allo
     RNS_LOG_NOT_IMPL;
     //INHERITED::setRequestedDisplayParams(params, allowReattach);
 }
-void WindowX11::onKey(rns_key_t eventKeyType, rns_key_status_t eventKeyAction)
-{
+void WindowX11::onKey(rnsKey eventKeyType, rnsKeyAction eventKeyAction){
     std::string eventName = "RCTTVNavigationEventNotification";
     keyNotification.emit(eventName, eventKeyType, eventKeyAction);
     return;

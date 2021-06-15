@@ -79,9 +79,9 @@ private:
     int     viewWidth_;
     int     viewHeight_;
     int     MSAASampleCount_;
-    void onKey(rns_key_t keyType,rns_key_status_t eventKeyAction);
+    void onKey(rnsKey keyType,rnsKeyAction eventKeyAction);
     typedef Window INHERITED;
-    rns_key_t keyIdentifierForWPEKeyCode(int keyCode);
+    rnsKey keyIdentifierForWPEKeyCode(int keyCode);
     NotificationCenter keyNotification;
 };
 

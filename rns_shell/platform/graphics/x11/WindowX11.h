@@ -70,8 +70,8 @@ private:
 #endif
     int          MSAASampleCount_;
     Atom         wmDeleteMessage_;
-    void onKey(rns_key_t eventKeyType, rns_key_status_t eventKeyAction);
-    rns_key_t  keyIdentifierForX11KeyCode(KeySym keycode);
+    void onKey(rnsKey eventKeyType, rnsKeyAction eventKeyAction);
+    rnsKey  keyIdentifierForX11KeyCode(KeySym keycode);
     NotificationCenter keyNotification;
     typedef Window INHERITED;
 };

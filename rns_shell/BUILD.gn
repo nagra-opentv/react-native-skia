@@ -10,7 +10,7 @@ config("rns_shell_config") {
   include_dirs = [ "." ]
 
   if(is_linux) {
-    include_dirs += [ "."]
+    include_dirs += [ "." ]
 
     defines = ["GOOGLE_STRIP_LOG=0"]
     extra_cppflags = getenv("BUILD_CPPFLAGS")

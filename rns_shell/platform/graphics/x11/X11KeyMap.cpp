@@ -2,8 +2,7 @@
 #include "ReactSkia/sdk/RNSKeyCodeMapping.h"
 #include "WindowX11.h"
 using namespace std;
-rns_key_t  RnsShell::WindowX11::keyIdentifierForX11KeyCode(KeySym keycode)
-{
+rnsKey  RnsShell::WindowX11::keyIdentifierForX11KeyCode(KeySym keycode){
     switch (keycode) {
     case XK_Left: return RNS_KEY_Left;
     case XK_Right: return RNS_KEY_Right;
