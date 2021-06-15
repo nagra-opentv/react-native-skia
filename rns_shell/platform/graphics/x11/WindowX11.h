@@ -21,6 +21,7 @@
 
 #include "Window.h"
 #include "PlatformDisplay.h"
+
 #include "ReactSkia/sdk/RNSKeyCodeMapping.h"
 #include "ReactSkia/sdk/NotificationCenter.h"
 typedef Window XWindow;
@@ -61,6 +62,8 @@ public:
 
 private:
     void closeWindow();
+    void onKey(rnsKey eventKeyType, rnsKeyAction eventKeyAction);
+    rnsKey  keyIdentifierForX11KeyCode(KeySym keycode);
 
     Display*     display_;
     XWindow      window_;
@@ -70,8 +73,6 @@ private:
 #endif
     int          MSAASampleCount_;
     Atom         wmDeleteMessage_;
-    void onKey(rnsKey eventKeyType, rnsKeyAction eventKeyAction);
-    rnsKey  keyIdentifierForX11KeyCode(KeySym keycode);
     NotificationCenter keyNotification;
     typedef Window INHERITED;
 };

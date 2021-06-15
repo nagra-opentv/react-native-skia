@@ -70,6 +70,8 @@ private:
     bool initViewBackend(wpe_view_backend* viewBackend);
     bool initRenderTarget(wpe_view_backend* viewBackend, wpe_renderer_backend_egl* renderBackend);
     void closeWindow();
+    void onKey(rnsKey keyType,rnsKeyAction eventKeyAction);
+    rnsKey keyIdentifierForWPEKeyCode(int keyCode);
 
     struct wpe_renderer_backend_egl_target* rendererTarget_;
     PlatformDisplay *platformDisplay_;
@@ -79,9 +81,7 @@ private:
     int     viewWidth_;
     int     viewHeight_;
     int     MSAASampleCount_;
-    void onKey(rnsKey keyType,rnsKeyAction eventKeyAction);
     typedef Window INHERITED;
-    rnsKey keyIdentifierForWPEKeyCode(int keyCode);
     NotificationCenter keyNotification;
 };
 

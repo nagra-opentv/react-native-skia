@@ -21,6 +21,7 @@
 #include "WindowContextFactory.h"
 
 #include "x11/PlatformDisplayX11.h"
+
 namespace RnsShell {
 
 SkTDynamicHash<WindowX11, XWindow> WindowX11::gWindowMap;
@@ -244,7 +245,8 @@ bool WindowX11::handleEvent(const XEvent& event) {
                 return true;
             }
             break;
-        case KeyRelease:
+
+	case KeyRelease:
             keycode = keyIdentifierForX11KeyCode(keysym);
             keyAction=RNS_KEY_Release;
             onKey(keycode,keyAction);
@@ -280,6 +282,7 @@ void WindowX11::setRequestedDisplayParams(const DisplayParams& params, bool allo
     RNS_LOG_NOT_IMPL;
     //INHERITED::setRequestedDisplayParams(params, allowReattach);
 }
+
 void WindowX11::onKey(rnsKey eventKeyType, rnsKeyAction eventKeyAction){
     std::string eventName = "RCTTVNavigationEventNotification";
     keyNotification.emit(eventName, eventKeyType, eventKeyAction);
