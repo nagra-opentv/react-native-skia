@@ -69,11 +69,11 @@ void RSkComponent::updateComponentData(const ShadowView &newShadowView , const u
       component_.layoutMetrics = newShadowView.layoutMetrics;
       /* TODO : Analyze if this computation can be handled in RNS shell Layer */
       absOrigin_ =  parent_ ? (parent_->absOrigin_ + component_.layoutMetrics.frame.origin) : component_.layoutMetrics.frame.origin;
-      
-      if(layer_) {
-          RNS_PROFILE_API_OFF(componentName_ << " getPicture :", static_cast<RnsShell::PictureLayer*>(layer_.get())->setPicture(getPicture()));
-      } 
    }
+   
+   if(layer_) {
+      RNS_PROFILE_API_OFF(componentName_ << " getPicture :", static_cast<RnsShell::PictureLayer*>(layer_.get())->setPicture(getPicture()));
+   } 
 }
 
 void RSkComponent::mountChildComponent(
