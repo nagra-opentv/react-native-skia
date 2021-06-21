@@ -49,7 +49,9 @@ sk_sp<SkPicture> RSkComponent::getPicture() {
 void RSkComponent::requiresLayer(const ShadowView &shadowView) {
     RNS_LOG_TODO("Need to come up with rules to decide wheather we need to create picture layer, texture layer etc");
     RNS_LOG_TODO("For now use 0,0 as offset, in future this offset should represent abosulte x,y");
-    layer_ = RnsShell::PictureLayer::Create({0,0}, nullptr);
+    // Text components paragraph builder is not compatabile with Picture layer,so use default layer
+    if(strcmp(component_.componentName,"Paragraph"))
+       layer_ = RnsShell::PictureLayer::Create({0,0}, nullptr);
 }
 
 void RSkComponent::updateComponentData(const ShadowView &newShadowView , const uint32_t updateMask) {
@@ -75,10 +77,18 @@ void RSkComponent::mountChildComponent(
         newChildComponent->parent_ = this;
         newChildComponent->absOrigin_ =  absOrigin_ + newChildComponent->component_.layoutMetrics.frame.origin;
     }
-    if(this->layer_)
-        this->layer_->insertChild(newChildComponent->layer_, index);
-    else
-        this->insertChild(newChildComponent, index);
+
+    if(this->layer_) { // If parent has a layer
+        if(newChildComponent->layer_)
+            this->layer_->insertChild(newChildComponent->layer_, index);
+        else
+            this->layer_->insertChild(newChildComponent, index);
+    }else {  // If parent itself is a layer type
+        if(newChildComponent->layer_)
+            this->insertChild(newChildComponent->layer_, index);
+        else
+            this->insertChild(newChildComponent, index);
+    }
 }
 
 void RSkComponent::unmountChildComponent(
@@ -89,10 +99,18 @@ void RSkComponent::unmountChildComponent(
         oldChildComponent->parent_ = nullptr ;
         oldChildComponent->absOrigin_ = oldChildComponent->component_.layoutMetrics.frame.origin;
     }
-    if(this->layer_)
-        this->layer_->removeChild(oldChildComponent->layer_, index);
-    else
-        this->removeChild(oldChildComponent, index);
+
+    if(this->layer_) { // If parent has a layer
+        if(oldChildComponent->layer_)
+            this->layer_->removeChild(oldChildComponent->layer_, index);
+        else
+            this->layer_->removeChild(oldChildComponent, index);
+    }else {  // If parent itself is a layer type
+        if(oldChildComponent->layer_)
+            this->removeChild(oldChildComponent->layer_, index);
+        else
+            this->removeChild(oldChildComponent, index);
+    }
 }
 
 } // namespace react
