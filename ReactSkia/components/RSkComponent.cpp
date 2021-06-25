@@ -10,11 +10,11 @@ namespace facebook {
 namespace react {
 
 RSkComponent::RSkComponent(const ShadowView &shadowView)
-    : parent_(nullptr)
+    : INHERITED(RnsShell::LAYER_TYPE_DEFAULT)
+    , parent_(nullptr)
     , absOrigin_(shadowView.layoutMetrics.frame.origin)
     , component_(shadowView)
 {
-    requiresLayer(shadowView);
 }
 
 RSkComponent::~RSkComponent() {}
@@ -48,10 +48,14 @@ sk_sp<SkPicture> RSkComponent::getPicture() {
 
 void RSkComponent::requiresLayer(const ShadowView &shadowView) {
     RNS_LOG_TODO("Need to come up with rules to decide wheather we need to create picture layer, texture layer etc");
+<<<<<<< HEAD
     RNS_LOG_TODO("For now use 0,0 as offset, in future this offset should represent abosulte x,y");
     // Text components paragraph builder is not compatabile with Picture layer,so use default layer
     if(strcmp(component_.componentName,"Paragraph"))
        layer_ = RnsShell::PictureLayer::Create({0,0}, nullptr);
+=======
+    layer_ = RnsShell::Layer::Create(RnsShell::LAYER_TYPE_PICTURE);
+>>>>>>> Create and Manage layers using LayerType.
 }
 
 void RSkComponent::updateComponentData(const ShadowView &newShadowView , const uint32_t updateMask) {
@@ -63,8 +67,14 @@ void RSkComponent::updateComponentData(const ShadowView &newShadowView , const u
       component_.eventEmitter = newShadowView.eventEmitter;
    if(updateMask & ComponentUpdateMaskLayoutMetrics) {
       component_.layoutMetrics = newShadowView.layoutMetrics;
+<<<<<<< HEAD
       /* TODO : Analyze if this computation can be handled in RNS shell Layer */
       absOrigin_ =  parent_ ? (parent_->absOrigin_ + component_.layoutMetrics.frame.origin) : component_.layoutMetrics.frame.origin;
+=======
+
+   if(layer_ && layer_->type() == RnsShell::LAYER_TYPE_PICTURE) {
+     RNS_PROFILE_API_OFF(componentName_ << " getPicture :", static_cast<RnsShell::PictureLayer*>(layer_.get())->setPicture(getPicture()));
+>>>>>>> Create and Manage layers using LayerType.
    }
    
    if(layer_) {
@@ -81,6 +91,7 @@ void RSkComponent::mountChildComponent(
         newChildComponent->absOrigin_ =  absOrigin_ + newChildComponent->component_.layoutMetrics.frame.origin;
     }
 
+<<<<<<< HEAD
     if(this->layer_) { // If parent has a layer
         if(newChildComponent->layer_)
             this->layer_->insertChild(newChildComponent->layer_, index);
@@ -92,6 +103,11 @@ void RSkComponent::mountChildComponent(
         else
             this->insertChild(newChildComponent, index);
     }
+=======
+    RNS_LOG_ASSERT((this->layer_ && newChildComponent->layer_), "Layer Object cannot be null");
+    if(this->layer_)
+        this->layer_->insertChild(newChildComponent->layer_, index);
+>>>>>>> Create and Manage layers using LayerType.
 }
 
 void RSkComponent::unmountChildComponent(
@@ -103,6 +119,7 @@ void RSkComponent::unmountChildComponent(
         oldChildComponent->absOrigin_ = oldChildComponent->component_.layoutMetrics.frame.origin;
     }
 
+<<<<<<< HEAD
     if(this->layer_) { // If parent has a layer
         if(oldChildComponent->layer_)
             this->layer_->removeChild(oldChildComponent->layer_, index);
@@ -114,6 +131,11 @@ void RSkComponent::unmountChildComponent(
         else
             this->removeChild(oldChildComponent, index);
     }
+=======
+    RNS_LOG_ASSERT((this->layer_ && oldChildComponent->layer_), "Layer Object cannot be null");
+    if(this->layer_)
+        this->layer_->removeChild(oldChildComponent->layer_, index);
+>>>>>>> Create and Manage layers using LayerType.
 }
 
 } // namespace react
