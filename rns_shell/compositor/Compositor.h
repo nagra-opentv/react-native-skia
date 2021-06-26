@@ -33,6 +33,7 @@ public:
     void invalidate();
     void begin(); // Call this before modifying render layer tree
     void commit(); // Commit the changes in render layer tree
+    void addDamageRect(SkIRect damage) { surfaceDamage_.push_back(damage); }
 
 private:
 
@@ -46,6 +47,8 @@ private:
     std::unique_ptr<WindowContext> windowContext_;
     sk_sp<SkSurface> backBuffer_;
     uint64_t nativeWindowHandle_;
+
+    std::vector<SkIRect> surfaceDamage_;
 
     struct {
         //Lock lock;

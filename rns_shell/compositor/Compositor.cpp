@@ -47,7 +47,8 @@ Compositor::Compositor(SkRect& viewportSize, float scaleFactor)
         attributes_.scaleFactor = scaleFactor;
         attributes_.needsResize = !viewportSize.isEmpty();
     }
-    RNS_LOG_DEBUG("Native Window Handle : " << nativeWindowHandle_ << " Window Context : " << windowContext_.get() << "Back Buffer : " << backBuffer_.get());
+    RNS_LOG_DEBUG("Native Window Handle : " << nativeWindowHandle_ << " Window Context : " << windowContext_.get() << "Back Buffer : " << backBuffer_.get() <<
+                  "Has swapbuffer support with damage rect : " << windowContext_->hasSwapBuffersWithDamage());
 }
 
 Compositor::~Compositor() {
@@ -115,7 +116,7 @@ void Compositor::renderLayerTree() {
             prevSwapTimestamp = SkTime::GetNSecs() * 1e-3;
         }
 #endif
-        RNS_PROFILE_API_OFF("SwapBuffers", windowContext_->swapBuffers());
+        RNS_PROFILE_API_OFF("SwapBuffers", windowContext_->swapBuffers(surfaceDamage_));
         window_->didRenderFrame();
     }
 }
@@ -123,6 +124,7 @@ void Compositor::renderLayerTree() {
 void Compositor::begin() {
     // Locke until render tree has rendered current tree
     std::scoped_lock lock(isMutating);
+    surfaceDamage_.clear(); // Clear the previous damage rects.
 }
 
 void Compositor::commit() {
