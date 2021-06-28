@@ -47,6 +47,9 @@ Compositor::Compositor(SkRect& viewportSize, float scaleFactor)
         attributes_.scaleFactor = scaleFactor;
         attributes_.needsResize = !viewportSize.isEmpty();
     }
+#if USE(RNS_SHELL_PARTIAL_UPDATES)
+    supportPartialUpdate_ = windowContext_->hasSwapBuffersWithDamage(); // TODO || Or atleast support front to back buffer copy.
+#endif
     RNS_LOG_DEBUG("Native Window Handle : " << nativeWindowHandle_ << " Window Context : " << windowContext_.get() << "Back Buffer : " << backBuffer_.get() <<
                   "Has swapbuffer support with damage rect : " << windowContext_->hasSwapBuffersWithDamage());
 }

@@ -33,7 +33,11 @@ public:
     void invalidate();
     void begin(); // Call this before modifying render layer tree
     void commit(); // Commit the changes in render layer tree
-    void addDamageRect(SkIRect damage) { surfaceDamage_.push_back(damage); }
+
+#if USE(RNS_SHELL_PARTIAL_UPDATES)
+    bool supportsPartialUpdates() { return supportPartialUpdate_; } // Wheather compositor can support partial paint and update
+    void addDamageRect(SkIRect damage) { if(supportPartialUpdate_ && !damage.isEmpty()) surfaceDamage_.push_back(damage); }
+#endif
 
 private:
 
@@ -49,6 +53,9 @@ private:
     sk_sp<SkSurface> backBuffer_;
     uint64_t nativeWindowHandle_;
 
+#if USE(RNS_SHELL_PARTIAL_UPDATES)
+    bool supportPartialUpdate_;
+#endif
     std::vector<SkIRect> surfaceDamage_;
 
     struct {
