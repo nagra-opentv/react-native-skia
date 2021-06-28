@@ -69,6 +69,25 @@ void Compositor::invalidate() {
     backBuffer_ = nullptr;
 }
 
+SkRect Compositor::beginClip(SkCanvas *canvas) {
+    SkRect clipBound = SkRect::MakeEmpty();
+    if(surfaceDamage_.size() == 0)
+        return clipBound;
+
+    SkPath clipPath = SkPath();
+    for (auto& rect : surfaceDamage_) {
+        RNS_LOG_DEBUG("Damage " << rect.x() << " " << rect.y() << " " << rect.width() << " " << rect.height());
+        clipPath.addRect(rect.left(), rect.top(), rect.right(), rect.bottom());
+    }
+    if(clipPath.getBounds().isEmpty())
+        return clipBound;
+
+    canvas->clipPath(clipPath);
+    clipBound = clipPath.getBounds();
+
+    return clipBound;
+}
+
 void Compositor::renderLayerTree() {
 
     if(!windowContext_)
@@ -100,8 +119,17 @@ void Compositor::renderLayerTree() {
         if (needsResize)
             glViewport(0, 0, viewportSize.width(), viewportSize.height());
 #endif
-        RNS_PROFILE_API_OFF("Render Tree Pre-Paint", rootLayer_.get()->prePaint(backBuffer_.get()));
-        RNS_PROFILE_API_OFF("Render Tree Paint", rootLayer_.get()->paint(backBuffer_.get()));
+        auto canvas = backBuffer_.get()->getCanvas();
+        SkAutoCanvasRestore save(canvas, true);
+        SkRect clipBound = beginClip(canvas);
+        PaintContext paintContext = {
+            canvas,  // canvas
+            &surfaceDamage_, // damage rects
+            clipBound, // combined clip bounds from surfaceDamage_
+            nullptr, // GrDirectContext
+        };
+        RNS_PROFILE_API_OFF("Render Tree Pre-Paint", rootLayer_.get()->prePaint(paintContext));
+        RNS_PROFILE_API_OFF("Render Tree Paint", rootLayer_.get()->paint(paintContext));
         RNS_PROFILE_API_OFF("SkSurface Flush & Submit", backBuffer_->flushAndSubmit());
 #ifdef RNS_ENABLE_FRAME_RATE_CONTROL
         {

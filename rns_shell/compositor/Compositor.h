@@ -39,6 +39,7 @@ private:
 
     void createWindowContext();
     void renderLayerTree();
+    SkRect beginClip(SkCanvas *canvas);
 
     std::mutex isMutating; // Lock the renderLayer tree while updating and rendering
 

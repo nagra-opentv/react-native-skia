@@ -72,7 +72,7 @@ class RSkComponent : public RnsShell::Layer, public std::enable_shared_from_this
  private:
   sk_sp<SkPicture> getPicture();
   // RnsShell::Layer implementations
-  void onPaint(SkSurface *surface) override;
+  void onPaint(SkCanvas*) override;
 
  private:
   RSkComponent *parent_;
