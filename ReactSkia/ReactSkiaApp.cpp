@@ -9,6 +9,7 @@
 using namespace RnsShell;
 
 Application *Application::Create(int argc, char **argv) {
+  printf("Application start here \n");
   return new ReactSkiaApp(argc, argv);
 }
 
