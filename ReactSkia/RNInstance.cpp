@@ -47,12 +47,20 @@ class JSCExecutorFactory : public JSExecutorFactory {
       std::shared_ptr<MessageQueueThread> jsQueue) override {
     auto installBindings = [jsiTurboModuleManager =
                                 jsiTurboModuleManager_](jsi::Runtime &runtime) {
-      // react::Logger iosLoggingBinder = [](const std::string &message,
-      // unsigned int logLevel) {
-      //   _RCTLogJavaScriptInternal(static_cast<RCTLogLevel>(logLevel),
-      //   [NSString stringWithUTF8String:message.c_str()]);
-      // };
-      // react::bindNativeLogger(runtime, iosLoggingBinder);
+      //TODO rnsLoggingBinder to be updated similar to RCTLog.mm
+      //TODO Update logging formatting of RnsLog to avoid logging filename
+      react::Logger rnsLoggingBinder = [](const std::string &message,unsigned int logLevel) {
+         switch(logLevel) {
+            case 3:RNS_LOG_ERROR("[NativeLogger] " << message.c_str());break;
+            case 2:RNS_LOG_WARN("[NativeLogger] " << message.c_str());break;
+            case 1:RNS_LOG_INFO("[NativeLogger] " << message.c_str());break;
+            case 0:
+            default:
+                   RNS_LOG_TRACE("[NativeLogger] " << message.c_str());
+         }
+      };
+      react::bindNativeLogger(runtime, rnsLoggingBinder);
+
       TurboModuleBinding::install(
           runtime, std::move(jsiTurboModuleManager->GetProvider()));
     };
