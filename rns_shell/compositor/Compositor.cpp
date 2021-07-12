@@ -154,4 +154,9 @@ void Compositor::setViewportSize(const SkRect& viewportSize) {
     commit();
 }
 
+GrDirectContext* Compositor::getDirectContext( )
+{
+  return windowContext_ ? windowContext_->directContext() : nullptr;
+}
+
 }   // namespace RnsShell

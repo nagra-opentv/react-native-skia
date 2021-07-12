@@ -23,6 +23,11 @@ class RSkSurfaceWindow {
 
   LayoutConstraints GetLayoutConstraints();
 
+// Interfaces to expose direct context of GPU backend
+  static GrDirectContext* directContext;
+  static void setDirectContext(GrDirectContext*);
+  static GrDirectContext* getDirectContext(){return  RSkSurfaceWindow::directContext;};
+
  private:
   void RecreateWindowBackend();
 

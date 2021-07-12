@@ -33,7 +33,8 @@ public:
     void invalidate();
     void begin(); // Call this before modifying render layer tree
     void commit(); // Commit the changes in render layer tree
-
+    GrDirectContext* getDirectContext(); // interface to expose directcontext of gpu backend
+    
 private:
 
     void createWindowContext();
