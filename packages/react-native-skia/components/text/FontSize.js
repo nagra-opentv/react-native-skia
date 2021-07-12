@@ -6,7 +6,7 @@ const SimpleViewApp = React.Node = () => {
     <>
       <Text style={{ margin: 10 }}>DEFAULT FONT SIZE</Text>
       <Text style={{ margin: 10, fontSize: 15 }}>FONT SIZE - 15</Text>
-      <Text style={{ margin: 10, fontSize: 30 }}>FONT SIZE - 30</Text>
+      <Text style={{ margin: 10, fontSize: 50 }}>FONT SIZE - 30</Text>
     </>
   );
 };

@@ -130,9 +130,9 @@ uint32_t RSkTextLayoutManager::buildParagraph (AttributedString attributedString
     auto fontSize = TextAttributes::defaultTextAttributes().fontSize;
     auto fontSizeMultiplier = TextAttributes::defaultTextAttributes().fontSizeMultiplier;
     
-    int FontWeight = SkFontStyle::kNormal_Weight;
-    int FontWidth = SkFontStyle::kNormal_Width;
-    SkFontStyle::Slant FontStyle = SkFontStyle::kUpright_Slant;
+    int fontWeight = SkFontStyle::kNormal_Weight;
+    int fontWidth = SkFontStyle::kNormal_Width;
+    SkFontStyle::Slant fontStyle = SkFontStyle::kUpright_Slant;
 
 
     for(auto &fragment: attributedString.getFragments()) {
@@ -149,18 +149,17 @@ uint32_t RSkTextLayoutManager::buildParagraph (AttributedString attributedString
                                    fragment.textAttributes.fontSizeMultiplier :
                                    TextAttributes::defaultTextAttributes().fontSizeMultiplier;
 
-        if (fragment.textAttributes.fontStyle.has_value()){
-            FontStyle = convertFontStyle(fragment.textAttributes.fontStyle.value());
-        }
+        fontWeight = fragment.textAttributes.fontWeight.has_value() ? 
+                                 convertFontWeight(fragment.textAttributes.fontWeight.value()) : 
+                                 SkFontStyle::kNormal_Weight;
 
-        if (fragment.textAttributes.fontWeight.has_value()){
-            FontWeight = convertFontWeight(fragment.textAttributes.fontWeight.value());
-        }
+        fontStyle = fragment.textAttributes.fontStyle.has_value() ? 
+                                 convertFontStyle(fragment.textAttributes.fontStyle.value()): 
+                                 SkFontStyle::kUpright_Slant;
 
         style.setFontSize(fontSize * fontSizeMultiplier);
         style.setFontFamilies({SkString(fragment.textAttributes.fontFamily.c_str())});
-
-        style.setFontStyle(SkFontStyle{FontWeight, FontWidth, FontStyle});
+        style.setFontStyle(SkFontStyle{fontWeight, fontWidth, fontStyle});
     
         /* Build paragraph considering text decoration attributes*/
         /* Required during text paint */
