@@ -47,8 +47,8 @@ SkPaint convertTextColor ( SharedColor textColor ) {
    return paint;
 }
 
-SkFontStyle::Slant convertFontStyle (FontStyle fontstyle) {
-    switch(fontstyle){
+SkFontStyle::Slant convertFontStyle (FontStyle fontStyle) {
+    switch(fontStyle){
         case FontStyle::Italic : return SkFontStyle::kItalic_Slant;
         case FontStyle::Oblique :
         case FontStyle::Normal : 
@@ -57,8 +57,8 @@ SkFontStyle::Slant convertFontStyle (FontStyle fontstyle) {
     }
 }   
 
-int convertFontWeight (FontWeight fontweight) {
-    switch(fontweight){
+int convertFontWeight (FontWeight fontWeight) {
+    switch(fontWeight){
         case FontWeight::Weight100 : return SkFontStyle::kThin_Weight;
         case FontWeight::Weight200 : return SkFontStyle::kExtraLight_Weight;
         case FontWeight::Weight300 : return SkFontStyle::kLight_Weight;
@@ -131,7 +131,6 @@ uint32_t RSkTextLayoutManager::buildParagraph (AttributedString attributedString
     auto fontSizeMultiplier = TextAttributes::defaultTextAttributes().fontSizeMultiplier;
     
     int fontWeight = SkFontStyle::kNormal_Weight;
-    int fontWidth = SkFontStyle::kNormal_Width;
     SkFontStyle::Slant fontStyle = SkFontStyle::kUpright_Slant;
 
 
@@ -159,7 +158,7 @@ uint32_t RSkTextLayoutManager::buildParagraph (AttributedString attributedString
 
         style.setFontSize(fontSize * fontSizeMultiplier);
         style.setFontFamilies({SkString(fragment.textAttributes.fontFamily.c_str())});
-        style.setFontStyle(SkFontStyle{fontWeight, fontWidth, fontStyle});
+        style.setFontStyle(SkFontStyle{fontWeight, SkFontStyle::kNormal_Width, fontStyle});
     
         /* Build paragraph considering text decoration attributes*/
         /* Required during text paint */
