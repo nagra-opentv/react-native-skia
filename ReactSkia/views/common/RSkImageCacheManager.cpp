@@ -14,6 +14,10 @@
 
 using namespace std;
 
+#define SKIA_CPU_IMAGE_CACHE_HWM_LIMIT  SKIA_CPU_IMAGE_CACHE_LIMIT *.95 //95% as High Water mark level
+#define SKIA_GPU_IMAGE_CACHE_HWM_LIMIT  SKIA_CPU_IMAGE_CACHE_LIMIT *.95 //95% as High Water mark level
+#define EVICT_COUNT  2 // Number of entries to be evicted on evictAsNeeded
+
 namespace facebook {
 namespace react {
 
@@ -52,10 +56,10 @@ namespace {
   bool evictAsNeeded()
   {
     size_t cpuCacheUsed{0} , gpuCacheUsed{0};
-    int fOldCount{0};
+    int fOldCount{0}, evictCount{0};
     map<size_t, sk_sp<SkImage>>::iterator it;
     auto gpuContext =RSkSurfaceWindow::getDirectContext();
-    //Reading used memory on CPU/GU Caches
+    //Read memory usage on CPU/GU Caches
     if(gpuContext){
       gpuContext->getResourceCacheUsage(&fOldCount, &gpuCacheUsed);       
     }
@@ -63,15 +67,15 @@ namespace {
     #ifdef RNS_IMAGECACHING_DEBUG
       RNS_LOG_DEBUG("CPU CACHE consumed bytes: "<<cpuCacheUsed<< ",, GPU CACHE consumed bytes: "<<gpuCacheUsed);
     #endif
-    //eveict unrefferended entries, on exceeding the memory limit
-    for(it = ImageCacheMap.begin();it != ImageCacheMap.end();it++) {
-      if((cpuCacheUsed < SKIA_CPU_IMAGE_CACHE_LIMIT) && ( gpuCacheUsed < SKIA_GPU_IMAGE_CACHE_LIMIT))
+    //Evict entry on reaching HWM. This logic to be enchanced based on growing need and clarity.
+    for(it = ImageCacheMap.begin();(it != ImageCacheMap.end()) && (evictCount < EVICT_COUNT);it++) {
+      if((cpuCacheUsed < SKIA_CPU_IMAGE_CACHE_HWM_LIMIT) && ( gpuCacheUsed < SKIA_GPU_IMAGE_CACHE_HWM_LIMIT))
         break;
       if( (it->second)->unique()) {
-        //Evicting unowned entries from hash map
           ImageCacheMap.erase(it);
-          it = ImageCacheMap.begin();
-   	  }
+          it=ImageCacheMap.begin();
+          evictCount++;
+    	}
     }
     return ((cpuCacheUsed < SKIA_CPU_IMAGE_CACHE_LIMIT) && ( gpuCacheUsed < SKIA_GPU_IMAGE_CACHE_LIMIT));
   }
@@ -92,14 +96,14 @@ sk_sp<SkImage> getImageData(const char *path)
     RNS_LOG_ERROR("Invalid File");
 	  return nullptr;
   }
-  #ifdef RNS_IMAGECACHING_DEBUG
-    RNS_LOG_DEBUG("Number of entries in HASH map :"<<ImageCacheMap.size());
-  #endif // RNS_IMAGECACHING_DEBUG
   if(ImageCacheMap.empty() || (ImageCacheMap.find(mystdhash(path))== ImageCacheMap.end())) {
     ImageData = makeImageData(path);
     //Add entry to hash map only if the cache mem usage is with in the limit
     if(evictAsNeeded()) {
       ImageCacheMap.insert(pair<size_t, sk_sp<SkImage>>(mystdhash(path),ImageData));
+      #ifdef RNS_IMAGECACHING_DEBUG
+      RNS_LOG_DEBUG("New Entry in Map..."<< ImageCacheMap.size()<<"for file :"<<path);
+      #endif
     }
     else {
       #ifdef RNS_IMAGECACHING_DEBUG
@@ -125,9 +129,9 @@ void printCacheUsage()
   auto gpuContext =RSkSurfaceWindow::getDirectContext();
   if(gpuContext) {
     gpuContext->getResourceCacheUsage(&fOldCount, &gpuUsedMem);
-    RNS_LOG_DEBUG("Memory consumed for this run in GPU CACHE:"<<((gpuUsedMem > prevGpuUsedMem)?(gpuUsedMem - prevGpuUsedMem) :gpuUsedMem));       
+    RNS_LOG_DEBUG("Memory consumed for this run in GPU CACHE:"<<(gpuUsedMem - prevGpuUsedMem));
   }
-  RNS_LOG_DEBUG("Memory consumed for this run in CPU CACHE :"<<((cpuUsedMem > prevCpuUsedMem)?(cpuUsedMem - prevCpuUsedMem):cpuUsedMem));
+  RNS_LOG_DEBUG("Memory consumed for this run in CPU CACHE :"<<(cpuUsedMem - prevCpuUsedMem));
   prevCpuUsedMem = cpuUsedMem;
   prevGpuUsedMem = gpuUsedMem;
 }

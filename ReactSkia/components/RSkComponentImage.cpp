@@ -42,8 +42,7 @@ void RSkComponentImage::OnPaint(
     auto imageData=getImageData(path.c_str());
     if(imageData){
       canvas->drawImageRect(imageData, rect, nullptr);
-    }
-    else
+    }else
       RNS_LOG_ERROR("Draw Image Failed for:" << path);
     #ifdef RNS_IMAGECACHING_DEBUG
       printCacheUsage();
