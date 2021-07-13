@@ -50,7 +50,6 @@ SkPaint convertTextColor ( SharedColor textColor ) {
 SkFontStyle::Slant convertFontStyle (FontStyle fontStyle) {
     switch(fontStyle){
         case FontStyle::Italic : return SkFontStyle::kItalic_Slant;
-        case FontStyle::Oblique :
         case FontStyle::Normal : 
         default: 
             return SkFontStyle::kUpright_Slant;
