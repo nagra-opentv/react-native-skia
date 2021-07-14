@@ -231,6 +231,9 @@ SK_API void SkDebugf_FileLine(const char* file,
 #define SK_FONT_CONFIG_INTERFACE_ONLY_ALLOW_SFNT_FONTS
 
 #define SK_IGNORE_BLURRED_RRECT_OPT
+// To be defined for handling custom memory pool
+// On Skia Image caching, enabling it will apply caching constraint on caching count
+// instead on Memory used.
 //#define SK_USE_DISCARDABLE_SCALEDIMAGECACHE
 
 #define SK_ATTR_DEPRECATED          SK_NOTHING_ARG1

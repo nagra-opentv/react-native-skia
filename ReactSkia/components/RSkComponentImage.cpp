@@ -3,9 +3,9 @@
 #include "ReactSkia/views/common/RSkDrawUtils.h"
 #include "ReactSkia/views/common/RSkImageCacheManager.h"
 #include "react/renderer/components/image/ImageShadowNode.h"
-#include "include/core/SkTime.h"
 
 #include "ReactSkia/utils/RnsLog.h"
+#include "ReactSkia/utils/RnsUtils.h"
 
 namespace facebook {
 namespace react {
@@ -36,18 +36,17 @@ void RSkComponentImage::OnPaint(
 	
     /* Draw order 1. Background 2. Image 3. Border*/
     drawBackground(canvas,frame,imageBorderMetrics,imageProps.backgroundColor,imageProps.opacity);
-    #ifdef RNS_IMAGECACHING_DEBUG
-      double getData = SkTime::GetMSecs();
-    #endif //RNS_IMAGECACHING_DEBUG
-    auto imageData=getImageData(path.c_str());
-    if(imageData){
+    RNS_PROFILE_START(drawImage)
+    sk_sp<SkImage> imageData=getImageData(path.c_str());
+    if(imageData) {
       canvas->drawImageRect(imageData, rect, nullptr);
-    }else
+    } else {
       RNS_LOG_ERROR("Draw Image Failed for:" << path);
-    #ifdef RNS_IMAGECACHING_DEBUG
+    }
+    RNS_PROFILE_END(path.c_str(),drawImage)
+#ifdef RNS_IMAGE_CACHE_USAGE_DEBUG
       printCacheUsage();
-      RNS_LOG_DEBUG("Draw Image "<<path<<"=>took :" << (SkTime::GetMSecs() - getData));
-    #endif //RNS_IMAGECACHING_DEBUG
+#endif //RNS_IMAGECACHING_DEBUG
     drawBorder(canvas,frame,imageBorderMetrics,imageProps.backgroundColor,imageProps.opacity);
   }
 }
