@@ -139,13 +139,13 @@ uint32_t RSkTextLayoutManager::buildParagraph (AttributedString attributedString
            continue;
         }
 
-        fontSize = !std::isnan(fragment.textAttributes.fontSize) ?
+        fontSize = (!std::isnan(fragment.textAttributes.fontSize)) && (fragment.textAttributes.fontSize > 0) ? 
                                  fragment.textAttributes.fontSize :
                                  TextAttributes::defaultTextAttributes().fontSize;
 
         fontSizeMultiplier = !std::isnan(fragment.textAttributes.fontSizeMultiplier) ?
-                                   fragment.textAttributes.fontSizeMultiplier :
-                                   TextAttributes::defaultTextAttributes().fontSizeMultiplier;
+                                 fragment.textAttributes.fontSizeMultiplier :
+                                 TextAttributes::defaultTextAttributes().fontSizeMultiplier;
 
         fontWeight = fragment.textAttributes.fontWeight.has_value() ? 
                                  convertFontWeight(fragment.textAttributes.fontWeight.value()) : 
