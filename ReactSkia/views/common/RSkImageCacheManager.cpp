@@ -4,13 +4,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-#include "ReactSkia/views/common/RSkImageCacheManager.h"
-#include "include/core/SkData.h"
-#include "ReactSkia/RSkSurfaceWindow.h"
-#include "ReactSkia/utils/RnsLog.h"
 #include <string>
-#include <iterator>
 #include <map>
+#include <iterator>
+
+#include "include/core/SkData.h"
+
+#include "ReactSkia/RSkSurfaceWindow.h"
+#include "ReactSkia/views/common/RSkImageCacheManager.h"
+#include "ReactSkia/utils/RnsLog.h"
 
 using namespace std;
 
@@ -130,11 +132,11 @@ void printCacheUsage() {
   if(gpuContext) {
     gpuContext->getResourceCacheUsage(&fOldCount, &gpuUsedMem);
     RNS_LOG_INFO("Memory consumed for this run in GPU CACHE:"<<(gpuUsedMem - prevGpuUsedMem));
+    prevGpuUsedMem = gpuUsedMem;
   }
 #endif
   RNS_LOG_INFO("Memory consumed for this run in CPU CACHE :"<<(cpuUsedMem - prevCpuUsedMem));
   prevCpuUsedMem = cpuUsedMem;
-  prevGpuUsedMem = gpuUsedMem;
 }
 #endif/*RNS_IMAGE_CACHE_USAGE_DEBUG*/
 
