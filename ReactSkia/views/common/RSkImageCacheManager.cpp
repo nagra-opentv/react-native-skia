@@ -60,7 +60,7 @@ namespace {
     int fOldCount{0}, evictCount{0};
     map<size_t, sk_sp<SkImage>>::iterator it;
 
-//Read memory usage on CPU/GU Caches
+/*Read memory usage on CPU/GU Caches*/
   #ifdef RNS_SHELL_HAS_GPU_SUPPORT
     GrDirectContext* gpuContext =RSkSurfaceWindow::getDirectContext();
     if(gpuContext) {
@@ -70,16 +70,16 @@ namespace {
     cpuCacheUsed = SkGraphics::GetResourceCacheTotalBytesUsed();
     RNS_LOG_DEBUG("CPU CACHE consumed bytes: "<<cpuCacheUsed<< ",, GPU CACHE consumed bytes: "<<gpuCacheUsed);
 
-    //Evict entry on reaching HWM. This logic to be enchanced based on growing need and clarity.
+    /*Evict entry on reaching HWM. This logic to be enchanced based on growing need and clarity.*/
     for(it = ImageCacheMap.begin();(it != ImageCacheMap.end()) && (evictCount < EVICT_COUNT);) {
       if((cpuCacheUsed < SKIA_CPU_IMAGE_CACHE_HWM_LIMIT) && ( gpuCacheUsed < SKIA_GPU_IMAGE_CACHE_HWM_LIMIT))
         break;
       if((it->second)->unique()) {
           ImageCacheMap.erase(it++);
           evictCount++;
-          RNS_LOG_DEBUG("EVICTING Entry for RNS Image Hash Map ...");
+          RNS_LOG_DEBUG("Evicting Entry from RNS Image Hash Map ...");
       } else {
-      	  ++it;
+          ++it;
       }
     }
     return ((cpuCacheUsed < SKIA_CPU_IMAGE_CACHE_LIMIT) && ( gpuCacheUsed < SKIA_GPU_IMAGE_CACHE_LIMIT));
@@ -91,7 +91,7 @@ sk_sp<SkImage> getImageData(const char *path) {
 
   hash<string> hashedKey; 
   sk_sp<SkImage> imageData{nullptr};
-  //Set Cache limit, if not set before
+  /*Set Cache limit, if not set before*/
   if(cpuCacheLimit_ != SKIA_CPU_IMAGE_CACHE_LIMIT) {
     setCpuImageCacheLimit(SKIA_CPU_IMAGE_CACHE_LIMIT);
   }
@@ -102,19 +102,19 @@ sk_sp<SkImage> getImageData(const char *path) {
 #endif
   if(!path) {
     RNS_LOG_ERROR("Invalid File");
-	  return nullptr;
+    return nullptr;
   }
- //first check file entry in hash map, if entry not exist, create imageData
+ /*first check file entry in hash map, if entry not exist, create imageData*/
   map<size_t, sk_sp<SkImage>>::iterator it = ImageCacheMap.find(hashedKey(path));
   imageData= ((it != ImageCacheMap.end()) ? it->second : nullptr);
   if(!imageData) {
     imageData = makeImageData(path);
-    //Add entry to hash map only if the cache mem usage is with in the limit
+    /*Add entry to hash map only if the cache mem usage is with in the limit*/
     if(evictAsNeeded() && imageData) {
       ImageCacheMap.insert(pair<size_t, sk_sp<SkImage>>(hashedKey(path),imageData));
-      RNS_LOG_DEBUG("New Entry in Map..."<< ImageCacheMap.size()<<"for file :"<<path);
+      RNS_LOG_DEBUG("New Entry in Map..."<< ImageCacheMap.size()<<" for file :"<<path);
     } else {
-        RNS_LOG_DEBUG("mem limit Reached , file is not cached ...");
+        RNS_LOG_DEBUG("Mem limit reached or Couldn't create imageData, file is not cached ...");
     }
   }
   return imageData;
